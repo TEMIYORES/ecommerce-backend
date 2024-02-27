@@ -406,3 +406,7 @@
 20240227	12:18:32	1c1b88c4-b443-4cac-9deb-a7fe29a111e2	GET	undefined	/api/users
 20240227	12:18:36	1345e426-dc56-4898-a93c-7917d521d05b	GET	undefined	/api/refresh
 20240227	12:18:44	30019f7d-0a0a-4905-9b3b-0017129f5bb9	GET	undefined	/api/users
+20240227	12:31:41	ae3f8810-3c20-43d6-8135-7911567c4a12	GET	undefined	/
+20240227	12:31:46	084acfc2-67dd-46e3-99fb-330a72104d7f	GET	undefined	/api/employees
+20240227	16:01:21	0a2933c0-8ee2-45b7-86d9-057a83c4a0fe	POST	undefined	/api/auth
+20240227	16:20:10	82596665-efd9-46de-b42c-1c7fc5d67c44	POST	undefined	/api/auth

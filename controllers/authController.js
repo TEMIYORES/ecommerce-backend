@@ -3,6 +3,8 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const handleUserAuth = async (req, res) => {
+  const cookies = req.cookies;
+
   const { username, password } = req.body;
   if (!username || !password) {
     return res
@@ -29,24 +31,21 @@ const handleUserAuth = async (req, res) => {
     process.env.ACCESS_TOKEN_SECRET,
     { expiresIn: "2m" }
   );
-  const refreshToken = await jwt.sign(
+  const newRefreshToken = await jwt.sign(
     { username: foundUser.username },
     process.env.REFRESH_TOKEN_SECRET,
     { expiresIn: "1d" }
   );
-  //   Storing refreshToken with user in Database
-  //   const result = await UserDB.findOneAndUpdate(
-  //     { username },
-  //     { refreshToken },
-  //     {
-  //       new: true,
-  //       upsert: true, // Make this update into an upsert
-  //     }
-  //   );
-  foundUser.refreshToken = refreshToken;
+  const newRefreshTokenArray = !cookies?.jwt
+    ? foundUser.refreshToken
+    : foundUser.refreshToken.filter((token) => token !== cookies?.jwt);
+
+  if (cookies?.jwt)
+    res.clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true });
+  foundUser.refreshToken = [...newRefreshTokenArray, newRefreshToken];
   const result = await foundUser.save();
   console.log(result);
-  res.cookie("jwt", refreshToken, {
+  res.cookie("jwt", newRefreshToken, {
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000,
     sameSite: "None",

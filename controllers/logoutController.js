@@ -22,7 +22,10 @@ const handleLogout = async (req, res) => {
   //       upsert: true, // Make this update into an upsert
   //     }
   //   );
-  foundUser.refreshToken = "";
+  // remove refreshToken from refreshToken Array in db
+  foundUser.refreshToken = foundUser.refreshToken.filter(
+    (token) => token !== refreshToken
+  );
   const result = await foundUser.save();
   console.log(result);
   res.clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true }); //secure:true - in https
