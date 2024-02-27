@@ -1,0 +1,16 @@
+20240225	14:35:50	b17b4060-d086-497b-92a9-1c6709cfae88	Error: Not Allowed by CORS
+20240225	15:42:54	2271e104-5c06-468d-bb34-d66202040181	ReferenceError: path is not defined
+20240225	17:45:53	d83f7d91-2a87-45fe-9979-d6c075ac8ede	SyntaxError: Unexpected string in JSON at position 13
+20240225	17:46:01	7f86b7cf-aaa5-4f23-aeab-ae0b32de1f5f	TypeError: data.filter is not a function
+20240225	17:49:08	935fc937-1283-493a-ad5e-ce9d0d350fb4	TypeError: data.filter is not a function
+20240225	17:50:59	35161523-d6a7-41c6-a387-856d6937f6db	SyntaxError: Unexpected token } in JSON at position 42
+20240225	17:51:02	353b3aca-28ca-4f65-81b6-036b4e2ef1df	SyntaxError: Unexpected token } in JSON at position 39
+20240225	21:43:37	097e2a5d-b17a-40eb-ae27-6d131a111131	Error: Cannot set headers after they are sent to the client
+20240225	21:43:37	4880a9c1-c065-40c2-aaa6-977ffca19df4	Error: Cannot set headers after they are sent to the client
+20240225	21:43:37	a0103271-7bbd-4833-985b-4cef92fdd0d8	Error: Cannot set headers after they are sent to the client
+20240225	21:43:37	baf55fca-c157-4979-a395-54ca62062d4a	Error: Cannot set headers after they are sent to the client
+20240226	10:08:44	60bd84b4-628c-4082-96c1-6bb6cfbf5aa6	Error: Cannot set headers after they are sent to the client
+20240226	12:22:37	de3a0314-217d-49bf-aea9-2a25f6ca03d5	Error: Cannot set headers after they are sent to the client
+20240226	12:27:22	d85aaebe-6e95-459e-b11e-d481c8f62278	Error: Cannot set headers after they are sent to the client
+20240226	12:30:45	e168c4ae-d234-4f4f-8b5c-b9a89541d93b	Error: Cannot set headers after they are sent to the client
+20240227	10:58:33	b03ad932-da9f-4f52-95a0-4c4857ec20ab	SyntaxError: Unexpected token : in JSON at position 22
