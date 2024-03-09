@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 
 const handleUserAuth = async (req, res) => {
   const cookies = req.cookies;
-
+  console.log("cookie available at login -", cookies?.jwt);
   const { username, password } = req.body;
   if (!username || !password) {
     return res
@@ -24,32 +24,50 @@ const handleUserAuth = async (req, res) => {
       .status(401)
       .json({ message: `Username or password does not match` });
   }
-  const roles = Object.values(foundUser.roles);
+  const roles = Object.values(foundUser.roles).filter(Boolean);
   //   Create Jwts
   const accessToken = await jwt.sign(
     { userInfo: { username: foundUser.username, roles: roles } },
     process.env.ACCESS_TOKEN_SECRET,
-    { expiresIn: "2m" }
+    { expiresIn: "15m" }
   );
   const newRefreshToken = await jwt.sign(
     { username: foundUser.username },
     process.env.REFRESH_TOKEN_SECRET,
     { expiresIn: "1d" }
   );
+
   const newRefreshTokenArray = !cookies?.jwt
     ? foundUser.refreshToken
     : foundUser.refreshToken.filter((token) => token !== cookies?.jwt);
 
-  if (cookies?.jwt)
-    res.clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true });
+  if (cookies?.jwt) {
+    // Scenerio:
+    // 1). user logins in but never uses the refreshToken and does not logout
+    // 2). refreshToken is stolen
+    // 3). If 1 & 2 reuse detection is needed to clear all Rts when user logs in
+    const refreshToken = cookies.jwt;
+    const foundToken = await User.findOne({ refreshToken }).exec();
+
+    // detected refresh token reuse!
+    if (!foundToken) {
+      console.log("attempted refreshToken reuse at login");
+      // Clear all previous tokens
+      newRefreshTokenArray = [];
+    }
+    res.clearCookie("jwt", {
+      httpOnly: true,
+      sameSite: "None",
+      secure: true,
+    });
+  }
   foundUser.refreshToken = [...newRefreshTokenArray, newRefreshToken];
   const result = await foundUser.save();
-  console.log(result);
   res.cookie("jwt", newRefreshToken, {
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000,
     sameSite: "None",
-    // secure: true,
+    secure: true,
   });
   return res.status(200).json({ accessToken });
 };
