@@ -64,6 +64,7 @@ const deleteUser = async (req, res) => {
 };
 const getUser = async (req, res) => {
   const { id } = req.params;
+  console.log("id", id);
   //   Check if username and password are passed in the request
   if (!id)
     return res.status(400).json({ message: `Id parameter is required!` });
@@ -71,7 +72,7 @@ const getUser = async (req, res) => {
   const foundUser = await usersDB.findOne({ _id: id }).exec();
   if (!foundUser)
     return res.status(400).json({ message: `No user with the userId` });
-  res.status(200).json(foundUser);
+  res.status(200).json({ username: foundUser.username });
 };
 
 module.exports = {

@@ -27,14 +27,20 @@ const handleUserAuth = async (req, res) => {
   const roles = Object.values(foundUser.roles).filter(Boolean);
   //   Create Jwts
   const accessToken = await jwt.sign(
-    { userInfo: { username: foundUser.username, roles: roles } },
+    {
+      userInfo: {
+        id: foundUser.id,
+        username: foundUser.username,
+        roles: roles,
+      },
+    },
     process.env.ACCESS_TOKEN_SECRET,
-    { expiresIn: "15m" }
+    { expiresIn: "10s" }
   );
   const newRefreshToken = await jwt.sign(
     { username: foundUser.username },
     process.env.REFRESH_TOKEN_SECRET,
-    { expiresIn: "1d" }
+    { expiresIn: "15s" }
   );
 
   const newRefreshTokenArray = !cookies?.jwt
@@ -47,7 +53,7 @@ const handleUserAuth = async (req, res) => {
     // 2). refreshToken is stolen
     // 3). If 1 & 2 reuse detection is needed to clear all Rts when user logs in
     const refreshToken = cookies.jwt;
-    const foundToken = await User.findOne({ refreshToken }).exec();
+    const foundToken = await UserDB.findOne({ refreshToken }).exec();
 
     // detected refresh token reuse!
     if (!foundToken) {

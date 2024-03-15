@@ -17,3 +17,5 @@
 20240227	16:35:53	005b0e5b-b82e-4193-96e9-47aff7c2fcb3	Error: Not Allowed by CORS
 20240227	16:35:54	3a222b1a-8fb3-4aa6-8399-0d89346a801b	Error: Not Allowed by CORS
 20240227	16:37:28	003e479b-28de-4e41-b221-2b2a6ae75dc8	Error: Not Allowed by CORS
+20240311	15:50:32	6cc509f6-c630-448d-bd85-dba5c1a9beff	Error: Not Allowed by CORS
+20240311	15:50:38	2ed910d6-09a4-44af-8c19-06c259cbd917	Error: Not Allowed by CORS

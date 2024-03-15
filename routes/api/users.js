@@ -17,6 +17,6 @@ router
   .put(VerifyRoles(ROLES_LIST.Admin), updateUser)
   .delete(VerifyRoles(ROLES_LIST.Admin), deleteUser);
 
-router.route("/:id").get(VerifyRoles(ROLES_LIST.Admin), getUser);
+router.route("/:id").get(getUser);
 
 module.exports = router;

@@ -4,7 +4,7 @@ const UsersDB = require("../model/User");
 const handleRefreshToken = async (req, res) => {
   const cookies = await req.cookies;
   if (!cookies?.jwt) return res.sendStatus(401);
-  const refreshToken = await cookies.jwt.trim();
+  const refreshToken = await cookies.jwt;
   // Clear the refreshToken here
   res.clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true });
   console.log("refreshToken", refreshToken);
@@ -50,14 +50,20 @@ const handleRefreshToken = async (req, res) => {
       const roles = Object.values(foundUser.roles);
       //   Create Jwts
       const accessToken = jwt.sign(
-        { userInfo: { username: foundUser.username, roles: roles } },
+        {
+          userInfo: {
+            id: foundUser.id,
+            username: foundUser.username,
+            roles: roles,
+          },
+        },
         process.env.ACCESS_TOKEN_SECRET,
-        { expiresIn: "15m" }
+        { expiresIn: "10s" }
       );
       const newRefreshToken = await jwt.sign(
         { username: foundUser.username },
         process.env.REFRESH_TOKEN_SECRET,
-        { expiresIn: "1d" }
+        { expiresIn: "15s" }
       );
       foundUser.refreshToken = [...newrefreshTokenArray, newRefreshToken];
       const result = await foundUser.save();
