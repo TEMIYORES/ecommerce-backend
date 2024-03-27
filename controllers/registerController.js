@@ -2,17 +2,15 @@ const UserDB = require("../model/User");
 const bcrypt = require("bcrypt");
 
 const handleNewUser = async (req, res) => {
-  const { username, password } = req.body;
-  if (!username || !password) {
-    return res
-      .status(400)
-      .json({ message: "username and password are required" });
+  const { email, name, password } = req.body;
+  if (!email || !name || !password) {
+    return res.status(400).json({ message: "email, name and password are required" });
   }
   //   Check for duplicate users in the database
-  const duplicate = await UserDB.findOne({ username }).exec(); //findOne method need exec() if there is no callback
+  const duplicate = await UserDB.findOne({ email }).exec(); //findOne method need exec() if there is no callback
 
   if (duplicate) {
-    return res.status(409).json({ message: "username already exists!" });
+    return res.status(409).json({ message: "Email already exists!" });
   }
   try {
     // encrypt the password
@@ -20,14 +18,15 @@ const handleNewUser = async (req, res) => {
 
     // create & store new user
     // const newUser = new UserDB({
-    //     username: username,
+    //     email: email,
     //     password: hashedPassword,
     // });
     // const result =await newUser.save()
 
     const newUser = await UserDB.create({
-      username: username,
+      email: email,
       password: hashedPassword,
+      name: name,
     });
 
     console.log(newUser);

@@ -22,8 +22,8 @@ const handleRefreshToken = async (req, res) => {
       async (err, decoded) => {
         if (err) return res.sendStatus(403); //forbidden
         console.log("attempted refresh token reuse!");
-        const username = decoded.username;
-        const hackedUser = await UsersDB.findOne({ username }).exec();
+        const email = decoded.email;
+        const hackedUser = await UsersDB.findOne({ email }).exec();
         hackedUser.refreshToken = [];
         const result = await hackedUser.save();
         console.log(result);
@@ -39,7 +39,10 @@ const handleRefreshToken = async (req, res) => {
     refreshToken,
     process.env.REFRESH_TOKEN_SECRET,
     async (err, decoded) => {
-      if (err || foundUser.username !== decoded.username) {
+      console.log("error", err);
+      console.log("founder user email", foundUser.email);
+      console.log("decoded email", decoded.email);
+      if (err || foundUser.email !== decoded.email) {
         console.log("expired refreshToken - ", refreshToken);
         foundUser.refreshToken = [...newrefreshTokenArray];
         const result = await foundUser.save();
@@ -53,17 +56,17 @@ const handleRefreshToken = async (req, res) => {
         {
           userInfo: {
             id: foundUser.id,
-            username: foundUser.username,
+            email: foundUser.email,
             roles: roles,
           },
         },
         process.env.ACCESS_TOKEN_SECRET,
-        { expiresIn: "10s" }
+        { expiresIn: "10m" }
       );
       const newRefreshToken = await jwt.sign(
-        { username: foundUser.username },
+        { email: foundUser.email },
         process.env.REFRESH_TOKEN_SECRET,
-        { expiresIn: "15s" }
+        { expiresIn: "1d" }
       );
       foundUser.refreshToken = [...newrefreshTokenArray, newRefreshToken];
       const result = await foundUser.save();
@@ -73,7 +76,7 @@ const handleRefreshToken = async (req, res) => {
         sameSite: "None",
         secure: true,
       });
-      res.json({ accessToken });
+      res.status(200).json({ accessToken });
     }
   );
 };

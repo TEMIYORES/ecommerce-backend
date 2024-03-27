@@ -65,14 +65,19 @@ const deleteUser = async (req, res) => {
 const getUser = async (req, res) => {
   const { id } = req.params;
   console.log("id", id);
-  //   Check if username and password are passed in the request
+  //   Check if id is passed in the request
   if (!id)
     return res.status(400).json({ message: `Id parameter is required!` });
-  // Check for duplicates
+  // Check if it exists
   const foundUser = await usersDB.findOne({ _id: id }).exec();
   if (!foundUser)
     return res.status(400).json({ message: `No user with the userId` });
-  res.status(200).json({ username: foundUser.username });
+  console.log("picture", foundUser?.picture);
+  res.status(200).json({
+    name: foundUser?.name,
+    email: foundUser.email,
+    picture: foundUser?.picture,
+  });
 };
 
 module.exports = {

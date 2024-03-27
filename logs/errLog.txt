@@ -19,3 +19,6 @@
 20240227	16:37:28	003e479b-28de-4e41-b221-2b2a6ae75dc8	Error: Not Allowed by CORS
 20240311	15:50:32	6cc509f6-c630-448d-bd85-dba5c1a9beff	Error: Not Allowed by CORS
 20240311	15:50:38	2ed910d6-09a4-44af-8c19-06c259cbd917	Error: Not Allowed by CORS
+20240319	02:39:44	5ea19dcd-93cc-4c8a-a69a-5eeeb6c24ef1	TypeError: req.files.map is not a function
+20240319	02:40:17	83e7f5ac-40fa-4b11-a04a-505da74b4fd2	TypeError: req.files.map is not a function
+20240321	16:06:35	f632bf63-ac38-474b-a469-36dbe2ac1a86	TypeError: Cannot convert undefined or null to object

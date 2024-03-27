@@ -11,12 +11,24 @@ const authRouter = require("./routes/api/auth");
 const refreshRoute = require("./routes/api/refreshToken");
 const logoutRouter = require("./routes/api/logout");
 const userRouter = require("./routes/api/users");
+const productRouter = require("./routes/api/products");
+const categoryRouter = require("./routes/api/categories");
+const uploadRouter = require("./routes/api/uploads");
 const corsOptions = require("./config/corsOptions");
 const VerifyJWT = require("./middleware/verifyJwt");
 const cookieParser = require("cookie-parser");
 const credentials = require("./middleware/credentials");
+const cloudinary = require("cloudinary");
+
+cloudinary.config({
+  cloud_name: "dlxovrmtr",
+  api_key: "584384793157694",
+  api_secret: "3AoswXM9NH82qR47F3iMWFqiRKc",
+});
+
 const mongoose = require("mongoose");
 const connectDB = require("./config/connectDB");
+
 require("dotenv").config();
 
 const app = express();
@@ -56,6 +68,9 @@ app.use("/api/logout", logoutRouter);
 app.use(VerifyJWT);
 app.use("/api/employees", employeesRouter);
 app.use("/api/users", userRouter);
+app.use("/api/products", productRouter);
+app.use("/api/categories", categoryRouter);
+app.use("/api/uploads", uploadRouter);
 app.use("/subdir", subdirRouter);
 
 app.all("*", (req, res) => {
