@@ -1,13 +1,13 @@
-const express = require("express");
-const {
+import express from "express";
+import {
   createNewCategory,
   getAllCategories,
   getCategory,
   updateCategory,
   deleteCategory,
-} = require("../../controllers/categoryController");
-const VerifyRoles = require("../../middleware/VerifyRole");
-const ROLES_LIST = require("../../config/roles_list");
+} from "../../controllers/categoryController.js";
+import VerifyRoles from "../../middleware/VerifyRole.js";
+import ROLES_LIST from "../../config/roles_list.js";
 const router = express.Router();
 
 router
@@ -18,4 +18,4 @@ router
   .delete(VerifyRoles(ROLES_LIST.Admin), deleteCategory);
 
 router.route("/:id").get(VerifyRoles(ROLES_LIST.Admin), getCategory);
-module.exports = router;
+export default router;

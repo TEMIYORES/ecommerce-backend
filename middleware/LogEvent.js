@@ -1,10 +1,17 @@
-const { format } = require("date-fns");
-const { v4: uuid } = require("uuid");
-const fs = require("fs");
-const fsPromises = require("fs").promises;
-const path = require("path");
+import { format } from "date-fns";
+import { v4 as uuid } from "uuid";
+import fs from "fs";
+import { promises as fsPromises } from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+// Get the current file's URL
+const __filename = fileURLToPath(import.meta.url);
 
-const LogEvents = async (message, logName) => {
+// Get the directory name
+import { dirname } from 'path';
+const __dirname = dirname(__filename);
+
+export const LogEvents = async (message, logName) => {
   const dateTime = `${format(new Date(), "yyyyMMdd\tHH:mm:ss")}`;
   const logItem = `${dateTime}\t${uuid()}\t${message}\n`;
   try {
@@ -19,8 +26,7 @@ const LogEvents = async (message, logName) => {
     console.error(err);
   }
 };
-const logger = (req, res, next) => {
+export const logger = (req, res, next) => {
   LogEvents(`${req.method}\t${req.headers.origin}\t${req.path}`, "reqLog.txt");
   next();
 };
-module.exports = { LogEvents, logger };

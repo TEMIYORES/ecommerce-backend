@@ -3,4 +3,4 @@ const ROLES_LIST = {
   Editor: "5678",
   User: "8901",
 };
-module.exports = ROLES_LIST;
+export default ROLES_LIST;

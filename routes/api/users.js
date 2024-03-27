@@ -1,13 +1,13 @@
-const express = require("express");
-const {
+import express from "express";
+import {
   getAllUsers,
   createNewUser,
   updateUser,
   getUser,
   deleteUser,
-} = require("../../controllers/userController");
-const VerifyRoles = require("../../middleware/VerifyRole");
-const ROLES_LIST = require("../../config/roles_list");
+} from "../../controllers/userController.js";
+import VerifyRoles from "../../middleware/VerifyRole.js";
+import ROLES_LIST from "../../config/roles_list.js";
 const router = express.Router();
 
 router
@@ -19,4 +19,4 @@ router
 
 router.route("/:id").get(getUser);
 
-module.exports = router;
+export default router;

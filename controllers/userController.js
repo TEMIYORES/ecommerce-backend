@@ -1,5 +1,5 @@
-const usersDB = require("../model/User");
-const bcrypt = require("bcrypt");
+import usersDB from "../model/User.js";
+import bcrypt from "bcrypt";
 const getAllUsers = async (req, res) => {
   const allUsers = await usersDB.find();
   if (!allUsers) return res.status(204).json({ message: "No Users found." });
@@ -80,7 +80,7 @@ const getUser = async (req, res) => {
   });
 };
 
-module.exports = {
+export {
   getAllUsers,
   createNewUser,
   updateUser,

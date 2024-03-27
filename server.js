@@ -1,24 +1,34 @@
-const express = require("express");
-const cors = require("cors");
-const path = require("path");
-const { logger } = require("./middleware/LogEvent");
-const errHandler = require("./middleware/errorhandler");
-const rootRouter = require("./routes/root");
-const subdirRouter = require("./routes/subdir");
-const employeesRouter = require("./routes/api/employees");
-const registerRoute = require("./routes/api/register");
-const authRouter = require("./routes/api/auth");
-const refreshRoute = require("./routes/api/refreshToken");
-const logoutRouter = require("./routes/api/logout");
-const userRouter = require("./routes/api/users");
-const productRouter = require("./routes/api/products");
-const categoryRouter = require("./routes/api/categories");
-const uploadRouter = require("./routes/api/uploads");
-const corsOptions = require("./config/corsOptions");
-const VerifyJWT = require("./middleware/verifyJwt");
-const cookieParser = require("cookie-parser");
-const credentials = require("./middleware/credentials");
-const cloudinary = require("cloudinary");
+import express from "express";
+import cors from "cors";
+import path from "path";
+import { logger } from "./middleware/LogEvent.js";
+import errHandler from "./middleware/errorhandler.js";
+import rootRouter from "./routes/root.js";
+import subdirRouter from "./routes/subdir.js";
+import employeesRouter from "./routes/api/employees.js";
+import registerRoute from "./routes/api/register.js";
+import authRouter from "./routes/api/auth.js";
+import refreshRoute from "./routes/api/refreshToken.js";
+import logoutRouter from "./routes/api/logout.js";
+import userRouter from "./routes/api/users.js";
+import productRouter from "./routes/api/products.js";
+import categoryRouter from "./routes/api/categories.js";
+import uploadRouter from "./routes/api/uploads.js";
+import corsOptions from "./config/corsOptions.js";
+import VerifyJWT from "./middleware/verifyJwt.js";
+import cookieParser from "cookie-parser";
+import credentials from "./middleware/credentials.js";
+import cloudinary from "cloudinary";
+import mongoose from "mongoose";
+import connectDB from "./config/connectDB.js";
+import dotenv from "dotenv";
+import { fileURLToPath } from "url";
+// Get the current file's URL
+const __filename = fileURLToPath(import.meta.url);
+
+// Get the directory name
+import { dirname } from "path";
+const __dirname = dirname(__filename);
 
 cloudinary.config({
   cloud_name: "dlxovrmtr",
@@ -26,10 +36,8 @@ cloudinary.config({
   api_secret: "3AoswXM9NH82qR47F3iMWFqiRKc",
 });
 
-const mongoose = require("mongoose");
-const connectDB = require("./config/connectDB");
 
-require("dotenv").config();
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3500;

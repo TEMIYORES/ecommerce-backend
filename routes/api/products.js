@@ -1,13 +1,13 @@
-const express = require("express");
-const {
+import express from "express";
+import {
   createNewProduct,
   getAllProducts,
   getProduct,
   updateProduct,
   deleteProduct,
-} = require("../../controllers/productController");
-const VerifyRoles = require("../../middleware/VerifyRole");
-const ROLES_LIST = require("../../config/roles_list");
+} from "../../controllers/productController.js";
+import VerifyRoles from "../../middleware/VerifyRole.js";
+import ROLES_LIST from "../../config/roles_list.js";
 const router = express.Router();
 
 router
@@ -18,4 +18,4 @@ router
   .delete(VerifyRoles(ROLES_LIST.Admin), deleteProduct);
 
 router.route("/:id").get(VerifyRoles(ROLES_LIST.Admin), getProduct);
-module.exports = router;
+export default router;

@@ -1,16 +1,16 @@
-const express = require("express");
+import express from "express";
 
-const VerifyRoles = require("../../middleware/VerifyRole");
-const ROLES_LIST = require("../../config/roles_list");
-const {
+import VerifyRoles from "../../middleware/VerifyRole.js";
+import ROLES_LIST from "../../config/roles_list.js";
+import {
   createNewUpload,
   getUpload,
-} = require("../../controllers/uploadController");
-const fileUpload = require("express-fileupload");
+} from "../../controllers/uploadController.js";
+import fileUpload from "express-fileupload";
+import filesPayloadExists from "../../middleware/filesPayloadExists.js";
+import fileExtLimiter from "../../middleware/fileExtLimiter.js";
+import fileSizeLimiter from "../../middleware/fileSizeLimiter.js";
 const router = express.Router();
-const filesPayloadExists = require("../../middleware/filesPayloadExists");
-const fileExtLimiter = require("../../middleware/fileExtLimiter");
-const fileSizeLimiter = require("../../middleware/fileSizeLimiter");
 router
   .route("/:id")
   .get(VerifyRoles(ROLES_LIST.Admin), getUpload)
@@ -23,4 +23,4 @@ router
     createNewUpload
   );
 
-module.exports = router;
+export default router;

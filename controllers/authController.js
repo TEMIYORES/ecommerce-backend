@@ -1,8 +1,8 @@
-const UserDB = require("../model/User");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+import UserDB from "../model/User.js";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
-const handleUserAuth = async (req, res) => {
+export const handleUserAuth = async (req, res) => {
   const cookies = req.cookies;
   console.log("cookie available at login -", cookies?.jwt);
   const { email, password, isAuthenticated, picture } = req.body;
@@ -70,7 +70,7 @@ const handleUserAuth = async (req, res) => {
     });
   }
   foundUser.refreshToken = [...newRefreshTokenArray, newRefreshToken];
-  if (foundUser.picture === undefined) foundUser.picture = picture || "";
+  if (foundUser.picture === undefined) foundUser.picture = picture || ".js";
   const result = await foundUser.save();
   console.log(result);
   res.cookie("jwt", newRefreshToken, {
@@ -82,4 +82,4 @@ const handleUserAuth = async (req, res) => {
   return res.status(200).json({ accessToken });
 };
 
-module.exports = handleUserAuth;
+export default handleUserAuth;

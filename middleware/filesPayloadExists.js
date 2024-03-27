@@ -5,4 +5,4 @@ const filesPayloadExists = (req, res, next) => {
 
   next();
 };
-module.exports = filesPayloadExists;
+export default filesPayloadExists;

@@ -1,4 +1,4 @@
-const path = require("path");
+import path from "path";
 
 const fileExtLimiter = (allowedArray) => {
   return (req, res, next) => {
@@ -21,4 +21,4 @@ const fileExtLimiter = (allowedArray) => {
   };
 };
 
-module.exports = fileExtLimiter;
+export default fileExtLimiter;

@@ -1,5 +1,4 @@
-const mongoose = require("mongoose");
-const { __esModule } = require("uuid");
+import mongoose from "mongoose";
 const connectDB = async () => {
   try {
     await mongoose.connect(process.env.MONGODB_URI);
@@ -8,4 +7,4 @@ const connectDB = async () => {
   }
 };
 
-module.exports = connectDB;
+export default connectDB;

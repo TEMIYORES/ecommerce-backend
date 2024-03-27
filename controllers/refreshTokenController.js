@@ -1,5 +1,5 @@
-const jwt = require("jsonwebtoken");
-const UsersDB = require("../model/User");
+import jwt from "jsonwebtoken";
+import UsersDB from "../model/User.js";
 
 const handleRefreshToken = async (req, res) => {
   const cookies = await req.cookies;
@@ -81,4 +81,4 @@ const handleRefreshToken = async (req, res) => {
   );
 };
 
-module.exports = handleRefreshToken;
+export default handleRefreshToken;

@@ -1,10 +1,12 @@
-const UserDB = require("../model/User");
-const bcrypt = require("bcrypt");
+import UserDB from "../model/User.js";
+import bcrypt from "bcrypt";
 
 const handleNewUser = async (req, res) => {
   const { email, name, password } = req.body;
   if (!email || !name || !password) {
-    return res.status(400).json({ message: "email, name and password are required" });
+    return res
+      .status(400)
+      .json({ message: "email, name and password are required" });
   }
   //   Check for duplicate users in the database
   const duplicate = await UserDB.findOne({ email }).exec(); //findOne method need exec() if there is no callback
@@ -36,4 +38,4 @@ const handleNewUser = async (req, res) => {
   }
 };
 
-module.exports = handleNewUser;
+export default handleNewUser;

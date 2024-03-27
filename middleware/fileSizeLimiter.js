@@ -11,7 +11,7 @@ const fileSizeLimiter = (req, res, next) => {
     }
   });
   if (filesOverLimit.length) {
-    const properVerb = filesOverLimit.length > 1 ? "are" : "is";
+    const properVerb = filesOverLimit.length > 1 ? "are" : "is.js";
     const sentence =
       `Upload failed. ${filesOverLimit.toString()} ${properVerb} over the file size limit of ${MB}MB.`.replaceAll(
         ",",
@@ -26,4 +26,4 @@ const fileSizeLimiter = (req, res, next) => {
   next();
 };
 
-module.exports = fileSizeLimiter;
+export default fileSizeLimiter;

@@ -1,5 +1,7 @@
-const ProductsDB = require("../model/Product");
-const UploadsDB = require("../model/Upload");
+import ProductsDB from "../model/Product.js";
+import { v2 as cloudinary } from "cloudinary";
+import fetch from "node-fetch";
+const UPLOAD_LENGTH = 4;
 
 const getAllProducts = async (req, res) => {
   const allProducts = await ProductsDB.find();
@@ -40,8 +42,8 @@ const createNewProduct = async (req, res) => {
   }
 };
 const updateProduct = async (req, res) => {
-  const { id, name, description, price, imageUrls } = req.body;
-  console.log({ imageUrls });
+  const { id, name, description, price, rawImageUrls } = req.body;
+  console.log({ rawImageUrls });
   //   Check if Productname and password are passed in the request
   if (!id)
     return res.status(400).json({ message: `Id parameter is required!` });
@@ -51,19 +53,28 @@ const updateProduct = async (req, res) => {
     return res
       .status(204)
       .json({ message: `No Product with ProductId ${id} Found.` });
+
+  let imageslength;
+  if (foundProduct.productImages) {
+    imageslength = foundProduct.productImages.length + rawImageUrls.length;
+  } else {
+    imageslength = rawImageUrls.length;
+  }
+  if (imageslength > UPLOAD_LENGTH) {
+    return res
+      .status(400)
+      .json({ message: "maximum of 4 files can be uploaded." });
+  }
   try {
     if (name) foundProduct.name = name;
     if (description) foundProduct.description = description;
     if (price) foundProduct.price = price;
-    if (imageUrls) {
+    if (rawImageUrls) {
+      const imageUrls = await Promise.all(uploadImages(rawImageUrls));
+      console.log({ imageUrls });
       foundProduct.productImages = [...imageUrls];
-      const foundProductImages = await UploadsDB.findOne({
-        productId: id,
-      }).exec();
-      foundProductImages.productImages = [...imageUrls];
-      await foundProductImages.save();
     }
-    await foundProduct.save();
+    // await foundProduct.save();
     return res.status(200).json({ message: "Product updated successfully!" });
   } catch (err) {
     console.error(err.message);
@@ -101,8 +112,34 @@ const getProduct = async (req, res) => {
     price: foundProduct?.price,
   });
 };
+const uploadImages = (rawImageUrls) => {
+  const uploadPromises = rawImageUrls.map(async (imageUrl) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        // Download the image  from  the Object URL
+        const response = await fetch(objectUrl);
+        const imageBuffer = await response.buffer(); // Convert the response to a buffer
 
-module.exports = {
+        cloudinary.uploader
+          .upload_stream({ resource_type: "image" }, (error, result) => {
+            if (error) {
+              console.error(error);
+              reject(error);
+            } else {
+              console.log(result);
+              resolve(result.secure_url);
+            }
+          })
+          .end(imageBuffer);
+      } catch (error) {
+        console.error(error);
+        reject(error);
+      }
+    });
+  });
+  return uploadPromises;
+};
+export {
   createNewProduct,
   updateProduct,
   getAllProducts,

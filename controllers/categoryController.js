@@ -1,6 +1,6 @@
-const CategoriesDB = require("../model/Category");
+import CategoriesDB from "../model/Category.js";
 
-const getAllCategories = async (req, res) => {
+export const getAllCategories = async (req, res) => {
   const allCategories = await CategoriesDB.find().populate("parentCategory");
   if (!allCategories)
     return res.status(204).json({ message: "No Categories found." });
@@ -14,7 +14,7 @@ const getAllCategories = async (req, res) => {
   });
   return res.status(200).json(result);
 };
-const createNewCategory = async (req, res) => {
+export const createNewCategory = async (req, res) => {
   const { name, parentCategory } = req.body;
   console.log({ name, parentCategory });
   //   Check if Categoryname and password are passed in the request
@@ -37,7 +37,7 @@ const createNewCategory = async (req, res) => {
     console.error(err.message);
   }
 };
-const updateCategory = async (req, res) => {
+export const updateCategory = async (req, res) => {
   const { id, name, parentCategory } = req.body;
 
   //   Check if Categoryname and password are passed in the request
@@ -60,7 +60,7 @@ const updateCategory = async (req, res) => {
     return res.status(404).json({ message: "Category failed to update" });
   }
 };
-const deleteCategory = async (req, res) => {
+export const deleteCategory = async (req, res) => {
   const { id } = req.body;
   //   Check if Categoryname and password are passed in the request
   if (!id)
@@ -76,7 +76,7 @@ const deleteCategory = async (req, res) => {
     .status(200)
     .json({ message: `Category ${foundCategory.name} deleted successfully` });
 };
-const getCategory = async (req, res) => {
+export const getCategory = async (req, res) => {
   const { id } = req.params;
   console.log("id", id);
   //   Check if id is passed in the request
@@ -94,10 +94,3 @@ const getCategory = async (req, res) => {
   });
 };
 
-module.exports = {
-  createNewCategory,
-  updateCategory,
-  getAllCategories,
-  deleteCategory,
-  getCategory,
-};

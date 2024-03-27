@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 const uploadSchema = new Schema({
   productId: {
@@ -12,4 +12,4 @@ const uploadSchema = new Schema({
   ],
 });
 
-module.exports = mongoose.model("Upload", uploadSchema);
+export default mongoose.model("Upload", uploadSchema);
