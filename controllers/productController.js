@@ -1,6 +1,6 @@
 import ProductsDB from "../model/Product.js";
 import { v2 as cloudinary } from "cloudinary";
-import fetch from "node-fetch";
+import { raw } from "express";
 const UPLOAD_LENGTH = 4;
 
 const getAllProducts = async (req, res) => {
@@ -13,17 +13,20 @@ const getAllProducts = async (req, res) => {
       name: product.name,
       description: product.description,
       price: product.price,
+      productImages: product.productImages,
     };
   });
   res.status(200).json(result);
 };
 const createNewProduct = async (req, res) => {
   const { name, description, price } = req.body;
+  const files = req.files;
   //   Check if Productname and password are passed in the request
-  if (!name || !description || !price)
-    return res
-      .status(400)
-      .json({ message: "Product name, description and price are required" });
+  if (!name || !description || !price || !files)
+    return res.status(400).json({
+      message:
+        "Product name, description, price and product images are required",
+    });
   // Check for duplicates
   const duplicate = await ProductsDB.findOne({ name }).exec();
   if (duplicate)
@@ -31,10 +34,27 @@ const createNewProduct = async (req, res) => {
       .status(409)
       .json({ message: "Product with the name already exists!" });
   try {
+    let imageUrls = [];
+    if (files) {
+      let imageslength = Object.keys(files).length;
+
+      if (imageslength > UPLOAD_LENGTH) {
+        return res
+          .status(400)
+          .json({ message: "maximum of 4 files can be uploaded." });
+      }
+      const imageBuffers = [];
+      Object.keys(files).forEach(async (key) => {
+        imageBuffers.push(files[key]);
+      });
+      imageUrls = await Promise.all(uploadImages(imageBuffers));
+      console.log({ imageUrls });
+    }
     const newProduct = await ProductsDB.create({
       name,
       description,
       price,
+      productImages: imageUrls,
     });
     res.status(201).json({ message: "Product created successfully!" });
   } catch (err) {
@@ -43,7 +63,8 @@ const createNewProduct = async (req, res) => {
 };
 const updateProduct = async (req, res) => {
   const { id, name, description, price, rawImageUrls } = req.body;
-  console.log({ rawImageUrls });
+  const files = req.files;
+  const splittedImages = rawImageUrls.split(",");
   //   Check if Productname and password are passed in the request
   if (!id)
     return res.status(400).json({ message: `Id parameter is required!` });
@@ -54,27 +75,37 @@ const updateProduct = async (req, res) => {
       .status(204)
       .json({ message: `No Product with ProductId ${id} Found.` });
 
-  let imageslength;
-  if (foundProduct.productImages) {
-    imageslength = foundProduct.productImages.length + rawImageUrls.length;
-  } else {
-    imageslength = rawImageUrls.length;
+  if (files) {
+    let imageslength;
+    if (foundProduct.productImages) {
+      imageslength =
+        foundProduct.productImages.length + Object.keys(files).length;
+    } else {
+      imageslength = Object.keys(files).length;
+    }
+    if (imageslength > UPLOAD_LENGTH) {
+      return res
+        .status(400)
+        .json({ message: "maximum of 4 files can be uploaded." });
+    }
   }
-  if (imageslength > UPLOAD_LENGTH) {
-    return res
-      .status(400)
-      .json({ message: "maximum of 4 files can be uploaded." });
-  }
+
   try {
     if (name) foundProduct.name = name;
     if (description) foundProduct.description = description;
     if (price) foundProduct.price = price;
-    if (rawImageUrls) {
-      const imageUrls = await Promise.all(uploadImages(rawImageUrls));
+    if (files) {
+      const imageBuffers = [];
+      Object.keys(files).forEach(async (key) => {
+        imageBuffers.push(files[key]);
+      });
+      const imageUrls = await Promise.all(uploadImages(imageBuffers));
       console.log({ imageUrls });
-      foundProduct.productImages = [...imageUrls];
+      foundProduct.productImages.push(...imageUrls);
+    } else {
+      foundProduct.productImages = splittedImages;
     }
-    // await foundProduct.save();
+    await foundProduct.save();
     return res.status(200).json({ message: "Product updated successfully!" });
   } catch (err) {
     console.error(err.message);
@@ -110,34 +141,30 @@ const getProduct = async (req, res) => {
     name: foundProduct?.name,
     description: foundProduct.description,
     price: foundProduct?.price,
+    productImages: foundProduct?.productImages,
   });
 };
-const uploadImages = (rawImageUrls) => {
-  const uploadPromises = rawImageUrls.map(async (imageUrl) => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        // Download the image  from  the Object URL
-        const response = await fetch(objectUrl);
-        const imageBuffer = await response.buffer(); // Convert the response to a buffer
-
+const uploadImages = (imageBuffers) => {
+  try {
+    const uploadPromises = imageBuffers.map(async (imageBuffer) => {
+      return new Promise((resolve, reject) => {
         cloudinary.uploader
           .upload_stream({ resource_type: "image" }, (error, result) => {
             if (error) {
               console.error(error);
               reject(error);
             } else {
-              console.log(result);
               resolve(result.secure_url);
             }
           })
-          .end(imageBuffer);
-      } catch (error) {
-        console.error(error);
-        reject(error);
-      }
+          .end(imageBuffer.data);
+      });
     });
-  });
-  return uploadPromises;
+    return uploadPromises;
+  } catch (error) {
+    console.error(error);
+    reject(error);
+  }
 };
 export {
   createNewProduct,

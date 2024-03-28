@@ -18,7 +18,7 @@ router
     VerifyRoles(ROLES_LIST.Admin),
     fileUpload({ createParentPath: true }),
     filesPayloadExists,
-    fileExtLimiter([".png", ".jpg", ".jpeg"]),
+    fileExtLimiter([".png", ".jpg", ".jpeg", ".webp"]),
     fileSizeLimiter,
     createNewUpload
   );
