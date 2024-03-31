@@ -10,13 +10,14 @@ export const getAllCategories = async (req, res) => {
       id: category._id,
       name: category.name,
       parentCategory: category.parentCategory,
+      properties: category.properties,
     };
   });
   return res.status(200).json(result);
 };
 export const createNewCategory = async (req, res) => {
-  const { name, parentCategory } = req.body;
-  console.log({ name, parentCategory });
+  const { name, parentCategory, properties } = req.body;
+  console.log({ name, parentCategory, properties });
   //   Check if Categoryname and password are passed in the request
   if (!name)
     return res.status(400).json({ message: "Category name is required" });
@@ -30,6 +31,7 @@ export const createNewCategory = async (req, res) => {
     const newCategory = await CategoriesDB.create({
       name,
       parentCategory: parentCategory || null,
+      properties: properties,
     });
     console.log({ newCategory });
     return res.status(201).json({ message: "Category created successfully!" });
@@ -38,7 +40,7 @@ export const createNewCategory = async (req, res) => {
   }
 };
 export const updateCategory = async (req, res) => {
-  const { id, name, parentCategory } = req.body;
+  const { id, name, parentCategory, properties } = req.body;
 
   //   Check if Categoryname and password are passed in the request
   if (!id)
@@ -51,7 +53,8 @@ export const updateCategory = async (req, res) => {
       .json({ message: `No Category with CategoryId ${id} Found.` });
   try {
     if (name) foundCategory.name = name;
-    foundCategory.parentCategory = parentCategory || null;
+    if (parentCategory) foundCategory.parentCategory = parentCategory || null;
+    if (properties.length) foundCategory.properties = properties;
 
     await foundCategory.save();
     return res.status(200).json({ message: "Category updated successfully!" });
@@ -91,6 +94,6 @@ export const getCategory = async (req, res) => {
     name: foundCategory?.name,
     description: foundCategory.description,
     price: foundCategory?.price,
+    properties: category.properties,
   });
 };
-

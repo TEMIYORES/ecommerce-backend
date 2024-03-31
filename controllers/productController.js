@@ -1,6 +1,5 @@
 import ProductsDB from "../model/Product.js";
 import { v2 as cloudinary } from "cloudinary";
-import { raw } from "express";
 const UPLOAD_LENGTH = 4;
 
 const getAllProducts = async (req, res) => {
@@ -14,12 +13,14 @@ const getAllProducts = async (req, res) => {
       description: product.description,
       price: product.price,
       productImages: product.productImages,
+      category: product.category,
+      properties: foundProduct?.properties,
     };
   });
   res.status(200).json(result);
 };
 const createNewProduct = async (req, res) => {
-  const { name, description, price } = req.body;
+  const { name, description, price, category, properties } = req.body;
   const files = req.files;
   //   Check if Productname and password are passed in the request
   if (!name || !description || !price || !files)
@@ -55,6 +56,8 @@ const createNewProduct = async (req, res) => {
       description,
       price,
       productImages: imageUrls,
+      category,
+      properties,
     });
     res.status(201).json({ message: "Product created successfully!" });
   } catch (err) {
@@ -62,7 +65,8 @@ const createNewProduct = async (req, res) => {
   }
 };
 const updateProduct = async (req, res) => {
-  const { id, name, description, price, rawImageUrls } = req.body;
+  const { id, name, description, price, category, properties, rawImageUrls } =
+    req.body;
   const files = req.files;
   const splittedImages = rawImageUrls.split(",");
   //   Check if Productname and password are passed in the request
@@ -94,6 +98,7 @@ const updateProduct = async (req, res) => {
     if (name) foundProduct.name = name;
     if (description) foundProduct.description = description;
     if (price) foundProduct.price = price;
+    if (category) foundProduct.category = category;
     if (files) {
       const imageBuffers = [];
       Object.keys(files).forEach(async (key) => {
@@ -101,10 +106,11 @@ const updateProduct = async (req, res) => {
       });
       const imageUrls = await Promise.all(uploadImages(imageBuffers));
       console.log({ imageUrls });
-      foundProduct.productImages.push(...imageUrls);
+      foundProduct.productImages = [...splittedImages, ...imageUrls];
     } else {
       foundProduct.productImages = splittedImages;
     }
+    if (properties) foundProduct.properties = { ...properties };
     await foundProduct.save();
     return res.status(200).json({ message: "Product updated successfully!" });
   } catch (err) {
@@ -142,6 +148,8 @@ const getProduct = async (req, res) => {
     description: foundProduct.description,
     price: foundProduct?.price,
     productImages: foundProduct?.productImages,
+    category: foundProduct?.category,
+    properties: foundProduct?.properties,
   });
 };
 const uploadImages = (imageBuffers) => {

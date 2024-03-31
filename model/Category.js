@@ -9,6 +9,7 @@ const categorySchema = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Category",
   },
+  properties: [{ type: Object }],
 });
 
 export default mongoose.model("Category", categorySchema);
