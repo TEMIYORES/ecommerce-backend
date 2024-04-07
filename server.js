@@ -70,21 +70,21 @@ app.use("/", express.static(path.join(__dirname, "public")));
 app.use("/subdir", express.static(path.join(__dirname, "public")));
 
 // Routes
-app.use("/", rootRouter);
-app.use("/api/register", registerRoute);
-app.use("/api/auth", authRouter);
-app.use("/api/refresh", refreshRoute);
-app.use("/api/logout", logoutRouter);
-app.use("/api/featured", featuredRouter);
-app.use("/api/cart", cartRouter);
-app.use("/api/checkout", checkoutRouter);
+app.use("/.netlify/functions/", rootRouter);
+app.use("/.netlify/functions/api/register", registerRoute);
+app.use("/.netlify/functions/api/auth", authRouter);
+app.use("/.netlify/functions/api/refresh", refreshRoute);
+app.use("/.netlify/functions/api/logout", logoutRouter);
+app.use("/.netlify/functions/api/featured", featuredRouter);
+app.use("/.netlify/functions/api/cart", cartRouter);
+app.use("/.netlify/functions/api/checkout", checkoutRouter);
 app.use(VerifyJWT);
-app.use("/api/employees", employeesRouter);
-app.use("/api/users", userRouter);
-app.use("/api/products", productRouter);
-app.use("/api/categories", categoryRouter);
-app.use("/api/uploads", uploadRouter);
-app.use("/subdir", subdirRouter);
+app.use("/.netlify/functions/api/employees", employeesRouter);
+app.use("/.netlify/functions/api/users", userRouter);
+app.use("/.netlify/functions/api/products", productRouter);
+app.use("/.netlify/functions/api/categories", categoryRouter);
+app.use("/.netlify/functions/api/uploads", uploadRouter);
+app.use("/.netlify/functions/subdir", subdirRouter);
 
 app.all("*", (req, res) => {
   if (req.accepts("html")) {
