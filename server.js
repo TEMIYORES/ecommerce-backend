@@ -35,8 +35,8 @@ const __dirname = dirname(__filename);
 
 cloudinary.config({
   cloud_name: "dlxovrmtr",
-  api_key: "584384793157694",
-  api_secret: "3AoswXM9NH82qR47F3iMWFqiRKc",
+  api_key: process.env.CLOUDINARY_SECRET_API_KEY,
+  api_secret: process.env.CLOUDINARY_SECRET_KEY,
 });
 
 dotenv.config();
