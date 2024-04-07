@@ -14,7 +14,7 @@ const getAllProducts = async (req, res) => {
       price: product.price,
       productImages: product.productImages,
       category: product.category,
-      properties: foundProduct?.properties,
+      properties: product.properties,
     };
   });
   res.status(200).json(result);
@@ -57,7 +57,7 @@ const createNewProduct = async (req, res) => {
       price,
       productImages: imageUrls,
       category,
-      properties,
+      properties: JSON.parse(properties),
     });
     res.status(201).json({ message: "Product created successfully!" });
   } catch (err) {
@@ -68,7 +68,10 @@ const updateProduct = async (req, res) => {
   const { id, name, description, price, category, properties, rawImageUrls } =
     req.body;
   const files = req.files;
-  const splittedImages = rawImageUrls.split(",");
+  const splittedImages = rawImageUrls
+    .split(",")
+    .filter((url) => !url.includes("blob:http://"));
+  console.log({ splittedImages });
   //   Check if Productname and password are passed in the request
   if (!id)
     return res.status(400).json({ message: `Id parameter is required!` });
@@ -82,8 +85,7 @@ const updateProduct = async (req, res) => {
   if (files) {
     let imageslength;
     if (foundProduct.productImages) {
-      imageslength =
-        foundProduct.productImages.length + Object.keys(files).length;
+      imageslength = splittedImages.length + Object.keys(files).length;
     } else {
       imageslength = Object.keys(files).length;
     }
@@ -93,12 +95,12 @@ const updateProduct = async (req, res) => {
         .json({ message: "maximum of 4 files can be uploaded." });
     }
   }
-
   try {
     if (name) foundProduct.name = name;
     if (description) foundProduct.description = description;
     if (price) foundProduct.price = price;
     if (category) foundProduct.category = category;
+    if (properties) foundProduct.properties = { ...JSON.parse(properties) };
     if (files) {
       const imageBuffers = [];
       Object.keys(files).forEach(async (key) => {
@@ -110,7 +112,6 @@ const updateProduct = async (req, res) => {
     } else {
       foundProduct.productImages = splittedImages;
     }
-    if (properties) foundProduct.properties = { ...properties };
     await foundProduct.save();
     return res.status(200).json({ message: "Product updated successfully!" });
   } catch (err) {

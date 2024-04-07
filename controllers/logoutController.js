@@ -12,12 +12,12 @@ const handleLogout = async (req, res) => {
     res.clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true });
     return res.sendStatus(204);
   }
-
+  console.log({ foundUser });
   foundUser.refreshToken = [];
   const result = await foundUser.save();
   console.log(result);
   res.clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true }); //secure:true - in https
-  res.sendStatus(204);
+  res.status(200).json({ message: "Logout successful" });
 };
 
 export default handleLogout;

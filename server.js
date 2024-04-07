@@ -14,6 +14,9 @@ import userRouter from "./routes/api/users.js";
 import productRouter from "./routes/api/products.js";
 import categoryRouter from "./routes/api/categories.js";
 import uploadRouter from "./routes/api/uploads.js";
+import featuredRouter from "./routes/api/featured.js";
+import cartRouter from "./routes/api/cart.js";
+import checkoutRouter from "./routes/api/checkout.js";
 import corsOptions from "./config/corsOptions.js";
 import VerifyJWT from "./middleware/verifyJwt.js";
 import cookieParser from "cookie-parser";
@@ -35,7 +38,6 @@ cloudinary.config({
   api_key: "584384793157694",
   api_secret: "3AoswXM9NH82qR47F3iMWFqiRKc",
 });
-
 
 dotenv.config();
 
@@ -73,6 +75,9 @@ app.use("/api/register", registerRoute);
 app.use("/api/auth", authRouter);
 app.use("/api/refresh", refreshRoute);
 app.use("/api/logout", logoutRouter);
+app.use("/api/featured", featuredRouter);
+app.use("/api/cart", cartRouter);
+app.use("/api/checkout", checkoutRouter);
 app.use(VerifyJWT);
 app.use("/api/employees", employeesRouter);
 app.use("/api/users", userRouter);

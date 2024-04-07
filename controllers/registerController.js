@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 
 const handleNewUser = async (req, res) => {
   const { email, name, password } = req.body;
+  console.log(req.body);
   if (!email || !name || !password) {
     return res
       .status(400)
@@ -32,7 +33,7 @@ const handleNewUser = async (req, res) => {
     });
 
     console.log(newUser);
-    res.status(201).json({ message: "New user created successfully!" });
+    res.status(201).json({ message: `${name} registered successfully!` });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
