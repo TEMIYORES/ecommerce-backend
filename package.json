@@ -12,6 +12,8 @@
     "express-fileupload": "^1.4.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.2.0",
+    "netlify-cli": "^17.21.2",
+    "netlify-lambda": "^2.0.16",
     "node-fetch": "^3.3.2",
     "serverless-http": "^3.2.0",
     "uuid": "^9.0.1"
