@@ -1,2 +1,2 @@
 [build]
-  command = "functions"
+  command = "npm build"
