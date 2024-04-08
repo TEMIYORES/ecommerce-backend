@@ -1,7 +1,7 @@
 import ProductsDB from "../model/Product.js";
 import OrdersDB from "../model/Order.js";
 import https from "https";
-
+import axios from "axios";
 const checkout = async (req, res) => {
   console.log(req.body);
 
@@ -44,17 +44,17 @@ const checkout = async (req, res) => {
     streetAddress,
     country,
   };
-  OrdersDB.create({
-    orderData,
-    customerInformation,
-  });
+
   console.log({ orderData });
   console.log({ totalOrderAmount });
 
   const params = JSON.stringify({
+    first_name: name.split(" ")[0] || "",
+    last_name: name.split(" ")[1] || "",
     email: email,
     amount: totalOrderAmount * 100,
     currency: "NGN",
+    callback_url: "https://ecommart.netlify.app",
   });
 
   const options = {
@@ -80,7 +80,12 @@ const checkout = async (req, res) => {
         console.log({ parsedData });
         const paymentUrl = parsedData.data.authorization_url;
         const paymentReference = parsedData.data.reference;
-        res.status(200).json({ paymentUrl, paymentReference });
+        OrdersDB.create({
+          _id: paymentReference,
+          orderData,
+          customerInformation,
+        });
+        return res.status(200).json({ paymentUrl });
       });
     })
     .on("error", (error) => {
@@ -89,5 +94,38 @@ const checkout = async (req, res) => {
   paystackReq.write(params);
   paystackReq.end();
 };
+const verifyCheckout = async (req, res) => {
+  console.log("id", req.body.id);
 
-export { checkout };
+  const { id } = req.body;
+  if (!id)
+    return res.status(400).json({ message: `Id parameter is required!` });
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(
+        `https://api.paystack.co/transaction/verify/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
+            "Content-Type": "application/json", // setting Content-Type header
+          },
+        }
+      );
+
+      console.log(response.data); // Handle response data
+      const fulfilledOrder = await OrdersDB.findOne({
+        _id: response.data.reference,
+      }).exec();
+      fulfilledOrder.paid = true;
+      fulfilledOrder.save();
+      return res.status(200).json({ fulfilledOrder });
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      return res.status(204).json({ message: "Verification failed" });
+    }
+  };
+  fetchData();
+};
+
+export { checkout, verifyCheckout };
