@@ -7,13 +7,11 @@ const handleRefreshToken = async (req, res) => {
   const refreshToken = await cookies.jwt;
   // Clear the refreshToken here
   res.clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true });
-  console.log("refreshToken", refreshToken);
   //   Check for user with the refreshToken
   // foundUser = await UsersDB.findOne({
   //   refreshToken: { $in: [refreshToken] },
   // }).exec();
   const foundUser = await UsersDB.findOne({ refreshToken }).exec();
-  console.log({ foundUser });
   // RefreshToken reuse detected!
   if (!foundUser) {
     await jwt.verify(
@@ -25,8 +23,7 @@ const handleRefreshToken = async (req, res) => {
         const email = decoded.email;
         const hackedUser = await UsersDB.findOne({ email }).exec();
         hackedUser.refreshToken = [];
-        const result = await hackedUser.save();
-        console.log(result);
+        await hackedUser.save();
       }
     );
     return res.sendStatus(403);
@@ -35,18 +32,14 @@ const handleRefreshToken = async (req, res) => {
     (token) => token !== refreshToken
   );
   //   verify refreshToken
-  await jwt.verify(
+  jwt.verify(
     refreshToken,
     process.env.REFRESH_TOKEN_SECRET,
     async (err, decoded) => {
-      console.log("error", err);
-      console.log("founder user email", foundUser.email);
-      console.log("decoded email", decoded.email);
       if (err || foundUser.email !== decoded.email) {
         console.log("expired refreshToken - ", refreshToken);
         foundUser.refreshToken = [...newrefreshTokenArray];
         const result = await foundUser.save();
-        console.log(result);
         return res.sendStatus(403);
       }
       // refreshToken still Valid
@@ -69,7 +62,7 @@ const handleRefreshToken = async (req, res) => {
         { expiresIn: "1d" }
       );
       foundUser.refreshToken = [...newrefreshTokenArray, newRefreshToken];
-      const result = await foundUser.save();
+      await foundUser.save();
       res.cookie("jwt", newRefreshToken, {
         httpOnly: true,
         maxAge: 24 * 60 * 60 * 1000,

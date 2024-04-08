@@ -45,9 +45,6 @@ const checkout = async (req, res) => {
     country,
   };
 
-  console.log({ orderData });
-  console.log({ totalOrderAmount });
-
   const params = JSON.stringify({
     first_name: name.split(" ")[0] || "",
     last_name: name.split(" ")[1] || "",
@@ -95,8 +92,6 @@ const checkout = async (req, res) => {
   paystackReq.end();
 };
 const verifyCheckout = async (req, res) => {
-  console.log("id", req.body.id);
-
   const { id } = req.body;
   if (!id)
     return res.status(400).json({ message: `Id parameter is required!` });
@@ -113,10 +108,14 @@ const verifyCheckout = async (req, res) => {
         }
       );
 
-      console.log(response.data); // Handle response data
       const fulfilledOrder = await OrdersDB.findOne({
-        _id: response.data.reference,
+        _id: response.data.data.reference,
       }).exec();
+      if (!fulfilledOrder)
+        return res
+          .status(204)
+          .json({ message: `No Order with OrderId ${id} Found.` });
+
       fulfilledOrder.paid = true;
       fulfilledOrder.save();
       return res.status(200).json({ fulfilledOrder });

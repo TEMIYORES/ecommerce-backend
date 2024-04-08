@@ -9,7 +9,6 @@ export const handleUserAuth = async (req, res) => {
   if (!email || (!isAuthenticated && !password)) {
     return res.status(400).json({ message: "email and password are required" });
   }
-  console.log({ email });
   const foundUser = await UserDB.findOne({ email }).exec();
   if (!foundUser) {
     return res
@@ -28,7 +27,7 @@ export const handleUserAuth = async (req, res) => {
 
   const roles = Object.values(foundUser.roles).filter(Boolean);
   //   Create Jwts
-  const accessToken = await jwt.sign(
+  const accessToken = jwt.sign(
     {
       userInfo: {
         id: foundUser.id,
@@ -39,7 +38,7 @@ export const handleUserAuth = async (req, res) => {
     process.env.ACCESS_TOKEN_SECRET,
     { expiresIn: "10m" }
   );
-  const newRefreshToken = await jwt.sign(
+  const newRefreshToken = jwt.sign(
     { email: foundUser.email },
     process.env.REFRESH_TOKEN_SECRET,
     { expiresIn: "1d" }
