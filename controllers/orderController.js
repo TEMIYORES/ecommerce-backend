@@ -2,13 +2,7 @@ import OrdersDB from "../model/Order.js";
 const getAllOrders = async (req, res) => {
   const allOrders = await OrdersDB.find();
   if (!allOrders) return res.status(204).json({ message: "No Orders found." });
-  const result = allOrders.map((order) => {
-    return {
-      id: order._id,
-      ...order,
-    };
-  });
-  res.status(200).json(result);
+  res.status(200).json(allOrders);
 };
 // const getFeaturedorder = async (req, res) => {
 //   const { id } = req.params;
