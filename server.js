@@ -17,6 +17,7 @@ import uploadRouter from "./routes/api/uploads.js";
 import featuredRouter from "./routes/api/featured.js";
 import cartRouter from "./routes/api/cart.js";
 import checkoutRouter from "./routes/api/checkout.js";
+import orderRouter from "./routes/api/order.js";
 import corsOptions from "./config/corsOptions.js";
 import VerifyJWT from "./middleware/verifyJwt.js";
 import cookieParser from "cookie-parser";
@@ -84,6 +85,7 @@ app.use("/api/users", userRouter);
 app.use("/api/products", productRouter);
 app.use("/api/categories", categoryRouter);
 app.use("/api/uploads", uploadRouter);
+app.use("/api/orders", orderRouter);
 app.use("/subdir", subdirRouter);
 
 app.all("*", (req, res) => {
