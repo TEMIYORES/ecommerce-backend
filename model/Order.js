@@ -6,8 +6,18 @@ const orderSchema = new Schema(
       type: String,
       required: true,
     },
-    orderData: Object,
-    customerInformation: Object,
+    orderData: {
+      type: Object,
+      required: true,
+    },
+    customerInformation: {
+      type: Object,
+      required: true,
+    },
+    totalAmount: {
+      type: Number,
+      required: true,
+    },
     paid: {
       type: Boolean,
       default: false,
