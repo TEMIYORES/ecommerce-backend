@@ -3,6 +3,7 @@ import {
   getAllFeaturedProducts,
   getFeaturedProduct,
   getFeaturedProducts,
+  getSingleProduct,
 } from "../../controllers/featuredController.js";
 
 const router = express.Router();
