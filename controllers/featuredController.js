@@ -17,7 +17,7 @@ const getFeaturedProducts = async (req, res) => {
   res.status(200).json(result);
 };
 const getAllFeaturedProducts = async (req, res) => {
-   const allProducts = await ProductsDB.find({}, null, {
+  const allProducts = await ProductsDB.find({}, null, {
     sort: { _id: -1 },
   });
   if (!allProducts)
@@ -51,4 +51,28 @@ const getFeaturedProduct = async (req, res) => {
     // properties: foundProduct?.properties,
   });
 };
-export { getFeaturedProduct, getAllFeaturedProducts, getFeaturedProducts };
+const getSingleProduct = async (req, res) => {
+  const { id } = req.params;
+  //   Check if id is passed in the request
+  if (!id)
+    return res.status(400).json({ message: `Id parameter is required!` });
+  // Check if it exists
+  const foundProduct = await ProductsDB.findOne({ _id: id }).exec();
+  if (!foundProduct)
+    return res.status(400).json({ message: `No Product with the ProductId` });
+  res.status(200).json({
+    id: foundProduct._id,
+    name: foundProduct?.name,
+    description: foundProduct.description,
+    price: foundProduct?.price,
+    productImages: foundProduct?.productImages,
+    category: foundProduct?.category,
+    properties: foundProduct?.properties,
+  });
+};
+export {
+  getFeaturedProduct,
+  getAllFeaturedProducts,
+  getFeaturedProducts,
+  getSingleProduct,
+};
