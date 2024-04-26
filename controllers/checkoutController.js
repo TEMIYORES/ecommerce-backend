@@ -5,8 +5,16 @@ import axios from "axios";
 const checkout = async (req, res) => {
   console.log(req.body);
 
-  const { name, email, city, postalCode, streetAddress, country, products } =
-    req.body;
+  const {
+    name,
+    email,
+    phoneNumber,
+    city,
+    postalCode,
+    streetAddress,
+    country,
+    products,
+  } = req.body;
   const uniqueIds = [...new Set(products)];
   console.log({ uniqueIds });
   const foundProducts = await ProductsDB.find({ _id: uniqueIds });
@@ -39,6 +47,7 @@ const checkout = async (req, res) => {
   const customerInformation = {
     name,
     email,
+    phoneNumber,
     city,
     postalCode,
     streetAddress,
@@ -46,8 +55,6 @@ const checkout = async (req, res) => {
   };
 
   const params = JSON.stringify({
-    first_name: name.split(" ")[0] || "",
-    last_name: name.split(" ")[1] || "",
     email: email,
     amount: totalOrderAmount * 100,
     currency: "NGN",
@@ -72,14 +79,15 @@ const checkout = async (req, res) => {
         data += chunk;
       });
 
-      paystackRes.on("end", () => {
+      paystackRes.on("end", async () => {
         const parsedData = JSON.parse(data);
         console.log({ parsedData });
         const paymentUrl = parsedData.data.authorization_url;
         const paymentReference = parsedData.data.reference;
-        OrdersDB.create({
+        await OrdersDB.create({
           _id: paymentReference,
           orderData,
+          totalAmount: totalOrderAmount,
           customerInformation,
         });
         return res.status(200).json({ paymentUrl });
@@ -87,6 +95,9 @@ const checkout = async (req, res) => {
     })
     .on("error", (error) => {
       console.error(error);
+      return res
+        .status(500)
+        .json({ message: "Payment failed. Please try again later." });
     });
   paystackReq.write(params);
   paystackReq.end();
@@ -107,21 +118,29 @@ const verifyCheckout = async (req, res) => {
           },
         }
       );
+      if (
+        response.data.data.status === "success" &&
+        response.data.data.reference
+      ) {
+        const fulfilledOrder = await OrdersDB.findOne({
+          _id: response.data.data.reference,
+        }).exec();
+        if (!fulfilledOrder)
+          return res
+            .status(204)
+            .json({ message: `No Order with OrderId ${id} Found.` });
 
-      const fulfilledOrder = await OrdersDB.findOne({
-        _id: response.data.data.reference,
-      }).exec();
-      if (!fulfilledOrder)
-        return res
-          .status(204)
-          .json({ message: `No Order with OrderId ${id} Found.` });
-
-      fulfilledOrder.paid = true;
-      fulfilledOrder.save();
-      return res.status(200).json({ fulfilledOrder });
+        fulfilledOrder.paid = true;
+        fulfilledOrder.save();
+        return res.status(200).json({ fulfilledOrder });
+      } else {
+        return res.status(402).json({ message: "Payment Required." });
+      }
     } catch (error) {
       console.error("Error fetching data:", error);
-      return res.status(204).json({ message: "Verification failed" });
+      return res
+        .status(500)
+        .json({ message: "Verification failed. Please try again later." });
     }
   };
   fetchData();
