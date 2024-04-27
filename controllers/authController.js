@@ -1,23 +1,23 @@
-import UserDB from "../model/User.js";
+import StoreDB from "../model/Store.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-export const handleUserAuth = async (req, res) => {
+export const handleStoreAuth = async (req, res) => {
   const cookies = req.cookies;
   console.log("cookie available at login -", cookies?.jwt);
   const { email, password, isAuthenticated, picture } = req.body;
   if (!email || (!isAuthenticated && !password)) {
     return res.status(400).json({ message: "email and password are required" });
   }
-  const foundUser = await UserDB.findOne({ email }).exec();
-  if (!foundUser) {
+  const foundStore = await StoreDB.findOne({ email }).exec();
+  if (!foundStore) {
     return res
       .status(401)
       .json({ message: `email or password does not match` });
   }
   if (!isAuthenticated) {
     //   evaluate Password
-    const match = await bcrypt.compare(password, foundUser.password);
+    const match = await bcrypt.compare(password, foundStore.password);
     if (!match) {
       return res
         .status(401)
@@ -25,13 +25,13 @@ export const handleUserAuth = async (req, res) => {
     }
   }
 
-  const roles = Object.values(foundUser.roles).filter(Boolean);
+  const roles = Object.values(foundStore.roles).filter(Boolean);
   //   Create Jwts
   const accessToken = jwt.sign(
     {
-      userInfo: {
-        id: foundUser.id,
-        email: foundUser.email,
+      StoreInfo: {
+        id: foundStore.id,
+        email: foundStore.email,
         roles: roles,
       },
     },
@@ -39,22 +39,22 @@ export const handleUserAuth = async (req, res) => {
     { expiresIn: "10m" }
   );
   const newRefreshToken = jwt.sign(
-    { email: foundUser.email },
+    { email: foundStore.email },
     process.env.REFRESH_TOKEN_SECRET,
     { expiresIn: "1d" }
   );
 
   let newRefreshTokenArray = !cookies?.jwt
-    ? foundUser.refreshToken
-    : foundUser.refreshToken.filter((token) => token !== cookies?.jwt);
+    ? foundStore.refreshToken
+    : foundStore.refreshToken.filter((token) => token !== cookies?.jwt);
 
   if (cookies?.jwt) {
     // Scenerio:
-    // 1). user logins in but never uses the refreshToken and does not logout
+    // 1). Store logins in but never uses the refreshToken and does not logout
     // 2). refreshToken is stolen
-    // 3). If 1 & 2 reuse detection is needed to clear all Rts when user logs in
+    // 3). If 1 & 2 reuse detection is needed to clear all Rts when Store logs in
     const refreshToken = cookies.jwt;
-    const foundToken = await UserDB.findOne({ refreshToken }).exec();
+    const foundToken = await StoreDB.findOne({ refreshToken }).exec();
 
     // detected refresh token reuse!
     if (!foundToken) {
@@ -68,9 +68,9 @@ export const handleUserAuth = async (req, res) => {
       secure: true,
     });
   }
-  foundUser.refreshToken = [...newRefreshTokenArray, newRefreshToken];
-  if (foundUser.picture === undefined) foundUser.picture = picture || ".js";
-  const result = await foundUser.save();
+  foundStore.refreshToken = [...newRefreshTokenArray, newRefreshToken];
+  if (foundStore.picture === undefined) foundStore.picture = picture || ".js";
+  const result = await foundStore.save();
   console.log(result);
   res.cookie("jwt", newRefreshToken, {
     httpOnly: true,
@@ -81,4 +81,4 @@ export const handleUserAuth = async (req, res) => {
   return res.status(200).json({ accessToken });
 };
 
-export default handleUserAuth;
+export default handleStoreAuth;

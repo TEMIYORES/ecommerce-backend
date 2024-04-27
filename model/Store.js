@@ -1,16 +1,17 @@
 import mongoose from "mongoose";
 const Schema = mongoose.Schema;
-const userSchema = new Schema({
+const storeSchema = new Schema({
   email: {
     type: String,
     required: true,
   },
-  name: {
+  storeName: {
     type: String,
     required: true,
   },
   username: {
     type: String,
+    required: true,
   },
   roles: {
     User: {
@@ -30,4 +31,4 @@ const userSchema = new Schema({
   refreshToken: [String],
 });
 
-export default mongoose.model("User", userSchema);
+export default mongoose.model("Store", storeSchema);

@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import UsersDB from "../model/User.js";
+import StoreDB from "../model/Store.js";
 
 const handleRefreshToken = async (req, res) => {
   const cookies = await req.cookies;
@@ -7,28 +7,26 @@ const handleRefreshToken = async (req, res) => {
   const refreshToken = await cookies.jwt;
   // Clear the refreshToken here
   res.clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true });
-  //   Check for user with the refreshToken
-  // foundUser = await UsersDB.findOne({
-  //   refreshToken: { $in: [refreshToken] },
-  // }).exec();
-  const foundUser = await UsersDB.findOne({ refreshToken }).exec();
+  //   Check for Store with the refreshToken
+
+  const foundStore = await StoreDB.findOne({ refreshToken }).exec();
   // RefreshToken reuse detected!
-  if (!foundUser) {
-    await jwt.verify(
+  if (!foundStore) {
+    jwt.verify(
       refreshToken,
       process.env.REFRESH_TOKEN_SECRET,
       async (err, decoded) => {
         if (err) return res.sendStatus(403); //forbidden
         console.log("attempted refresh token reuse!");
         const email = decoded.email;
-        const hackedUser = await UsersDB.findOne({ email }).exec();
-        hackedUser.refreshToken = [];
-        await hackedUser.save();
+        const hackedStore = await StoreDB.findOne({ email }).exec();
+        hackedStore.refreshToken = [];
+        await hackedStore.save();
       }
     );
     return res.sendStatus(403);
   }
-  const newrefreshTokenArray = foundUser.refreshToken.filter(
+  const newrefreshTokenArray = foundStore.refreshToken.filter(
     (token) => token !== refreshToken
   );
   //   verify refreshToken
@@ -36,20 +34,20 @@ const handleRefreshToken = async (req, res) => {
     refreshToken,
     process.env.REFRESH_TOKEN_SECRET,
     async (err, decoded) => {
-      if (err || foundUser.email !== decoded.email) {
+      if (err || foundStore.email !== decoded.email) {
         console.log("expired refreshToken - ", refreshToken);
-        foundUser.refreshToken = [...newrefreshTokenArray];
-        const result = await foundUser.save();
+        foundStore.refreshToken = [...newrefreshTokenArray];
+        const result = await foundStore.save();
         return res.sendStatus(403);
       }
       // refreshToken still Valid
-      const roles = Object.values(foundUser.roles);
+      const roles = Object.values(foundStore.roles);
       //   Create Jwts
       const accessToken = jwt.sign(
         {
-          userInfo: {
-            id: foundUser.id,
-            email: foundUser.email,
+          StoreInfo: {
+            id: foundStore.id,
+            email: foundStore.email,
             roles: roles,
           },
         },
@@ -57,12 +55,12 @@ const handleRefreshToken = async (req, res) => {
         { expiresIn: "10m" }
       );
       const newRefreshToken = await jwt.sign(
-        { email: foundUser.email },
+        { email: foundStore.email },
         process.env.REFRESH_TOKEN_SECRET,
         { expiresIn: "1d" }
       );
-      foundUser.refreshToken = [...newrefreshTokenArray, newRefreshToken];
-      await foundUser.save();
+      foundStore.refreshToken = [...newrefreshTokenArray, newRefreshToken];
+      await foundStore.save();
       res.cookie("jwt", newRefreshToken, {
         httpOnly: true,
         maxAge: 24 * 60 * 60 * 1000,
