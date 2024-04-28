@@ -1,12 +1,11 @@
 import StoreDB from "../model/Store.js";
-import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 export const handleStoreAuth = async (req, res) => {
   const cookies = req.cookies;
   console.log("cookie available at login -", cookies?.jwt);
-  const { email, password, isAuthenticated, picture } = req.body;
-  if (!email || (!isAuthenticated && !password)) {
+  const { email, password } = req.body;
+  if (!email || !password) {
     return res.status(400).json({ message: "email and password are required" });
   }
   const foundStore = await StoreDB.findOne({ email }).exec();
@@ -15,23 +14,15 @@ export const handleStoreAuth = async (req, res) => {
       .status(401)
       .json({ message: `email or password does not match` });
   }
-  if (!isAuthenticated) {
-    //   evaluate Password
-    const match = await bcrypt.compare(password, foundStore.password);
-    if (!match) {
-      return res
-        .status(401)
-        .json({ message: `email or password does not match` });
-    }
-  }
 
   const roles = Object.values(foundStore.roles).filter(Boolean);
   //   Create Jwts
   const accessToken = jwt.sign(
     {
-      StoreInfo: {
+      storeInfo: {
         id: foundStore.id,
         email: foundStore.email,
+        storeName: foundStore.storeName,
         roles: roles,
       },
     },
@@ -69,16 +60,13 @@ export const handleStoreAuth = async (req, res) => {
     });
   }
   foundStore.refreshToken = [...newRefreshTokenArray, newRefreshToken];
-  if (foundStore.picture === undefined) foundStore.picture = picture || ".js";
-  const result = await foundStore.save();
-  console.log(result);
   res.cookie("jwt", newRefreshToken, {
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000,
     sameSite: "None",
     secure: true,
   });
-  return res.status(200).json({ accessToken });
+  return res.status(200).json({ accessToken, storeName: foundStore.storeName });
 };
 
 export default handleStoreAuth;

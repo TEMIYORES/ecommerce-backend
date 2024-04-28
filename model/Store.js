@@ -9,6 +9,10 @@ const storeSchema = new Schema({
     type: String,
     required: true,
   },
+  adminUrl: {
+    type: String,
+    required: true,
+  },
   username: {
     type: String,
     required: true,
@@ -19,7 +23,10 @@ const storeSchema = new Schema({
       default: "8901",
     },
     Editor: String,
-    Admin: String,
+    Admin: {
+      type: String,
+      default: "1234",
+    },
   },
   password: {
     type: String,

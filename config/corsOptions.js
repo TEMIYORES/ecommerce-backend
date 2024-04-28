@@ -3,6 +3,11 @@ const corsOptions = {
   origin: (origin, callback) => {
     if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
       callback(null, true);
+    } else if (
+      origin.includes("localhost") ||
+      origin.includes("ecommart.netlify.app")
+    ) {
+      callback(null, true);
     } else {
       callback(new Error("Not Allowed by CORS"));
     }

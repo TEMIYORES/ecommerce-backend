@@ -1,4 +1,4 @@
-import StoreDB from "../model/Store.js"
+import StoreDB from "../model/Store.js";
 import bcrypt from "bcrypt";
 
 const handleNewStore = async (req, res) => {
@@ -10,11 +10,21 @@ const handleNewStore = async (req, res) => {
     });
   }
   //   Check for duplicate users in the database
-  const duplicate = await StoreDB.findOne({ email }).exec(); //findOne method need exec() if there is no callback
+  const firstDuplicate = await StoreDB.findOne({ email }).exec(); //findOne method need exec() if there is no callback
+  const secondDuplicate = await StoreDB.findOne({ storeName }).exec();
 
-  if (duplicate) {
+  if (firstDuplicate && secondDuplicate) {
+    return res
+      .status(409)
+      .json({ message: "Email and Store Name already exists!" });
+  }
+  if (firstDuplicate && !secondDuplicate) {
     return res.status(409).json({ message: "Email already exists!" });
   }
+  if (!firstDuplicate && secondDuplicate) {
+    return res.status(409).json({ message: "Store Name already exists!" });
+  }
+
   try {
     // encrypt the password
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -23,6 +33,7 @@ const handleNewStore = async (req, res) => {
       email: email,
       password: hashedPassword,
       storeName: storeName,
+      adminUrl: `admin-${storeName.toLowerCase()}`,
       username: name,
     });
 

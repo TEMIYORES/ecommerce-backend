@@ -45,9 +45,10 @@ const handleRefreshToken = async (req, res) => {
       //   Create Jwts
       const accessToken = jwt.sign(
         {
-          StoreInfo: {
+          storeInfo: {
             id: foundStore.id,
             email: foundStore.email,
+            storeName: foundStore.storeName,
             roles: roles,
           },
         },
@@ -67,7 +68,7 @@ const handleRefreshToken = async (req, res) => {
         sameSite: "None",
         secure: true,
       });
-      res.status(200).json({ accessToken });
+      res.status(200).json({ accessToken, storeName: foundStore.storeName });
     }
   );
 };

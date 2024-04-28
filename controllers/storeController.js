@@ -5,30 +5,7 @@ const getAllStore = async (req, res) => {
   if (!allStore) return res.status(204).json({ message: "No Store found." });
   res.status(200).json(allStore);
 };
-// const createNewStore = async (req, res) => {
-//   const { Storename, password } = req.body;
-//   //   Check if Storename and password are passed in the request
-//   if (!Storename || !password)
-//     return res
-//       .status(400)
-//       .json({ message: "Storename and password are required" });
-//   // Check for duplicates
-//   const duplicate = await StoreDB.findOne({ Storename }).exec();
-//   if (duplicate)
-//     return res
-//       .status(409)
-//       .json({ message: "Store with the Storename already exists!" });
-//   try {
-//     const hashedPassword = await bcrypt.hash(password, 10);
-//     const newStore = await StoreDB.create({
-//       Storename,
-//       password: hashedPassword,
-//     });
-//     res.status(201).json({ message: "Store created successfully!" });
-//   } catch (err) {
-//     console.error(err.message);
-//   }
-// };
+
 const updateStore = async (req, res) => {
   const { id, storeName, password } = req.body;
   //   Check if Storename and password are passed in the request
