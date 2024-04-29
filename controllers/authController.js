@@ -1,4 +1,5 @@
 import StoreDB from "../model/Store.js";
+import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 export const handleStoreAuth = async (req, res) => {
@@ -14,7 +15,13 @@ export const handleStoreAuth = async (req, res) => {
       .status(401)
       .json({ message: `email or password does not match` });
   }
-
+  //   evaluate Password
+  const match = await bcrypt.compare(password, foundStore.password);
+  if (!match) {
+    return res
+      .status(401)
+      .json({ message: `email or password does not match` });
+  }
   const roles = Object.values(foundStore.roles).filter(Boolean);
   //   Create Jwts
   const accessToken = jwt.sign(
@@ -60,6 +67,8 @@ export const handleStoreAuth = async (req, res) => {
     });
   }
   foundStore.refreshToken = [...newRefreshTokenArray, newRefreshToken];
+  await foundStore.save();
+  console.log("origin", req.origin);
   res.cookie("jwt", newRefreshToken, {
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000,

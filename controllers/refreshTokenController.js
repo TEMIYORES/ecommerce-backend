@@ -8,7 +8,6 @@ const handleRefreshToken = async (req, res) => {
   // Clear the refreshToken here
   res.clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true });
   //   Check for Store with the refreshToken
-
   const foundStore = await StoreDB.findOne({ refreshToken }).exec();
   // RefreshToken reuse detected!
   if (!foundStore) {

@@ -8,7 +8,6 @@ import {
 import VerifyRoles from "../../middleware/VerifyRole.js";
 import ROLES_LIST from "../../config/roles_list.js";
 const router = express.Router();
-
 router
   .route("/")
   .get(VerifyRoles(ROLES_LIST.Admin), getAllStore)

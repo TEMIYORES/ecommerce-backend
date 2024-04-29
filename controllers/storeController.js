@@ -49,28 +49,27 @@ const getStore = async (req, res) => {
   const foundStore = await StoreDB.findOne({ _id: id }).exec();
   if (!foundStore)
     return res.status(400).json({ message: `No Store with the StoreId` });
-  console.log("picture", foundStore?.picture);
   res.status(200).json({
-    name: foundStore?.name,
+    storeName: foundStore?.storeName,
+    username: foundStore?.username,
     email: foundStore.email,
-    picture: foundStore?.picture,
   });
 };
-const handleStoreCheck = async (req, res) => {
-  const { storeName } = req.body;
-  if (!storeName) {
-    return res.status(400).json({
-      message: "Store name is required",
-    });
-  }
-  //   Check for duplicate Store in the database
-  const duplicate = await StoreDB.findOne({ storeName }).exec(); //findOne method need exec() if there is no callback
+// const handleStoreCheck = async (req, res) => {
+//   const { storeName } = req.body;
+//   if (!storeName) {
+//     return res.status(400).json({
+//       message: "Store name is required",
+//     });
+//   }
+//   //   Check for duplicate Store in the database
+//   const duplicate = await StoreDB.findOne({ storeName }).exec(); //findOne method need exec() if there is no callback
 
-  if (duplicate) {
-    return res
-      .status(409)
-      .json({ status: false, message: "Store name already exists!" });
-  }
-  return res.status(201).json({ status: true });
-};
+//   if (duplicate) {
+//     return res
+//       .status(409)
+//       .json({ status: false, message: "Store name already exists!" });
+//   }
+//   return res.status(201).json({ status: true });
+// };
 export { getAllStore, updateStore, deleteStore, getStore };

@@ -20,13 +20,17 @@ const getAllProducts = async (req, res) => {
   res.status(200).json(result);
 };
 const createNewProduct = async (req, res) => {
-  const { name, description, price, category, properties } = req.body;
+  const { storeId, name, description, price, category, properties } = req.body;
   const files = req.files;
   //   Check if Productname and password are passed in the request
   if (!name || !description || !price || !files)
     return res.status(400).json({
       message:
-        "Product name, description, price and product images are required",
+        " roduct name, description, price and product images are required",
+    });
+  if (!storeId)
+    return res.status(400).json({
+      message: "Store Id is required",
     });
   // Check for duplicates
   const duplicate = await ProductsDB.findOne({ name }).exec();
@@ -52,6 +56,7 @@ const createNewProduct = async (req, res) => {
       console.log({ imageUrls });
     }
     const newProduct = await ProductsDB.create({
+      storeId,
       name,
       description,
       price,
@@ -65,8 +70,16 @@ const createNewProduct = async (req, res) => {
   }
 };
 const updateProduct = async (req, res) => {
-  const { id, name, description, price, category, properties, rawImageUrls } =
-    req.body;
+  const {
+    id,
+    storeId,
+    name,
+    description,
+    price,
+    category,
+    properties,
+    rawImageUrls,
+  } = req.body;
   const files = req.files;
   const splittedImages = rawImageUrls
     .split(",")
@@ -76,7 +89,7 @@ const updateProduct = async (req, res) => {
   if (!id)
     return res.status(400).json({ message: `Id parameter is required!` });
   // Check for duplicates
-  const foundProduct = await ProductsDB.findOne({ _id: id }).exec();
+  const foundProduct = await ProductsDB.findOne({ _id: id, storeId }).exec();
   if (!foundProduct)
     return res
       .status(204)

@@ -1,8 +1,8 @@
 import express from "express";
-import { checkAdminStore } from "../../controllers/adminController.js";
+import { checkStore } from "../../controllers/checkStoreController.js";
 
 const router = express.Router();
-router.route("/").get(checkAdminStore);
+router.route("/").post(checkStore);
 // router.route("/:id").get(getFeaturedProduct);
 
 export default router;

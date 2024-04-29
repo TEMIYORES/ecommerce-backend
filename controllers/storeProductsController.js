@@ -1,6 +1,7 @@
 import ProductsDB from "../model/Product.js";
-const getFeaturedProducts = async (req, res) => {
-  const allProducts = await ProductsDB.find({}, null, {
+const getRecentProducts = async (req, res) => {
+  const { storeId } = req.body;
+  const allProducts = await ProductsDB.find({ storeId }, null, {
     sort: { _id: -1 },
     limit: 10,
   });
@@ -16,8 +17,9 @@ const getFeaturedProducts = async (req, res) => {
   });
   res.status(200).json(result);
 };
-const getAllFeaturedProducts = async (req, res) => {
-  const allProducts = await ProductsDB.find({}, null, {
+const getAllProducts = async (req, res) => {
+  const { storeId } = req.body;
+  const allProducts = await ProductsDB.find({ storeId }, null, {
     sort: { _id: -1 },
   });
   if (!allProducts)
@@ -34,11 +36,12 @@ const getAllFeaturedProducts = async (req, res) => {
 };
 const getFeaturedProduct = async (req, res) => {
   const { id } = req.params;
+  const { storeId } = req.body;
   //   Check if id is passed in the request
-  if (!id)
-    return res.status(400).json({ message: `Id parameter is required!` });
+  if (!storeId)
+    return res.status(400).json({ message: `store Id parameter is required!` });
   // Check if it exists
-  const foundProduct = await ProductsDB.findOne({ _id: id }).exec();
+  const foundProduct = await ProductsDB.findOne({ _id: id, storeId }).exec();
   if (!foundProduct)
     return res.status(400).json({ message: `No Product with the ProductId` });
   res.status(200).json({
@@ -53,11 +56,12 @@ const getFeaturedProduct = async (req, res) => {
 };
 const getSingleProduct = async (req, res) => {
   const { id } = req.params;
+  const { storeId } = req.body;
   //   Check if id is passed in the request
   if (!id)
     return res.status(400).json({ message: `Id parameter is required!` });
   // Check if it exists
-  const foundProduct = await ProductsDB.findOne({ _id: id }).exec();
+  const foundProduct = await ProductsDB.findOne({ _id: id, storeId }).exec();
   if (!foundProduct)
     return res.status(400).json({ message: `No Product with the ProductId` });
   res.status(200).json({
@@ -72,7 +76,7 @@ const getSingleProduct = async (req, res) => {
 };
 export {
   getFeaturedProduct,
-  getAllFeaturedProducts,
-  getFeaturedProducts,
+  getAllProducts,
+  getRecentProducts,
   getSingleProduct,
 };
