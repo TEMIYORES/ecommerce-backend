@@ -15,8 +15,12 @@ import fileSizeLimiter from "../../middleware/fileSizeLimiter.js";
 const router = express.Router();
 
 router
-  .route("/")
+  .route("/:storeId")
   .get(VerifyRoles(ROLES_LIST.Admin), getAllProducts)
+  .delete(VerifyRoles(ROLES_LIST.Admin), deleteProduct);
+
+router
+  .route("/")
   .post(
     VerifyRoles(ROLES_LIST.Admin),
     fileUpload({ createParentPath: true }),
@@ -30,8 +34,7 @@ router
     fileExtLimiter([".png", ".jpg", ".jpeg", ".webp"]),
     fileSizeLimiter,
     updateProduct
-  )
-  .delete(VerifyRoles(ROLES_LIST.Admin), deleteProduct);
+  );
 
-router.route("/:id").get(VerifyRoles(ROLES_LIST.Admin), getProduct);
+router.route("/:storeId/:id").get(VerifyRoles(ROLES_LIST.Admin), getProduct);
 export default router;

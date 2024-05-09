@@ -33,7 +33,6 @@ const handleNewStore = async (req, res) => {
       email: email,
       password: hashedPassword,
       storeName: storeName,
-      adminUrl: `admin-${storeName.toLowerCase()}`,
       username: name,
     });
 

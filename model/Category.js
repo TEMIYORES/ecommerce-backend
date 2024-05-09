@@ -1,6 +1,10 @@
 import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 const categorySchema = new Schema({
+  storeId: {
+    type: String,
+    required: true,
+  },
   name: {
     type: String,
     required: true,

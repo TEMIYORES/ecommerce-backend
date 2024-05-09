@@ -9,10 +9,6 @@ const storeSchema = new Schema({
     type: String,
     required: true,
   },
-  adminUrl: {
-    type: String,
-    required: true,
-  },
   username: {
     type: String,
     required: true,

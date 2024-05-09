@@ -1,5 +1,9 @@
 import OrdersDB from "../model/Order.js";
 const getAllOrders = async (req, res) => {
+  const { storeId } = req.params;
+  if (!storeId) {
+    return res.status(400).json({ message: "Store Id required." });
+  }
   const allOrders = await OrdersDB.find({}, null, {
     sort: { updatedAt: -1 },
   });
@@ -16,7 +20,10 @@ const getAllOrders = async (req, res) => {
   res.status(200).json(result);
 };
 const getOrder = async (req, res) => {
-  const { id } = req.params;
+  const { storeId, id } = req.params;
+  if (!storeId) {
+    return res.status(400).json({ message: "Store Id required." });
+  }
   //   Check if id is passed in the request
   if (!id)
     return res.status(400).json({ message: `Id parameter is required!` });

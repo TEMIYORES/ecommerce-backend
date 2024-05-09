@@ -3,7 +3,11 @@ import { v2 as cloudinary } from "cloudinary";
 const UPLOAD_LENGTH = 4;
 
 const getAllProducts = async (req, res) => {
-  const allProducts = await ProductsDB.find();
+  const { storeId } = req.params;
+  if (!storeId) {
+    return res.status(400).json({ message: "Store Id required." });
+  }
+  const allProducts = await ProductsDB.find({ storeId });
   if (!allProducts)
     return res.status(204).json({ message: "No Products found." });
   const result = allProducts.map((product) => {
@@ -21,19 +25,22 @@ const getAllProducts = async (req, res) => {
 };
 const createNewProduct = async (req, res) => {
   const { storeId, name, description, price, category, properties } = req.body;
+  if (!storeId) {
+    return res.status(400).json({ message: "Store Id required." });
+  }
   const files = req.files;
   //   Check if Productname and password are passed in the request
   if (!name || !description || !price || !files)
     return res.status(400).json({
       message:
-        " roduct name, description, price and product images are required",
+        "product name, description, price and product images are required",
     });
   if (!storeId)
     return res.status(400).json({
       message: "Store Id is required",
     });
   // Check for duplicates
-  const duplicate = await ProductsDB.findOne({ name }).exec();
+  const duplicate = await ProductsDB.findOne({ storeId, name }).exec();
   if (duplicate)
     return res
       .status(409)
@@ -71,8 +78,8 @@ const createNewProduct = async (req, res) => {
 };
 const updateProduct = async (req, res) => {
   const {
-    id,
     storeId,
+    id,
     name,
     description,
     price,
@@ -80,16 +87,22 @@ const updateProduct = async (req, res) => {
     properties,
     rawImageUrls,
   } = req.body;
+  if (!storeId) {
+    return res.status(400).json({ message: "Store Id required." });
+  }
+  if (!id)
+    return res.status(400).json({ message: `Id parameter is required!` });
   const files = req.files;
   const splittedImages = rawImageUrls
     .split(",")
     .filter((url) => !url.includes("blob:http://"));
   console.log({ splittedImages });
   //   Check if Productname and password are passed in the request
-  if (!id)
-    return res.status(400).json({ message: `Id parameter is required!` });
+
   // Check for duplicates
-  const foundProduct = await ProductsDB.findOne({ _id: id, storeId }).exec();
+  console.log({ storeId });
+  const foundProduct = await ProductsDB.findOne({ storeId, _id: id }).exec();
+  console.log({ foundProduct });
   if (!foundProduct)
     return res
       .status(204)
@@ -133,12 +146,16 @@ const updateProduct = async (req, res) => {
   }
 };
 const deleteProduct = async (req, res) => {
+  const { storeId } = req.params;
+  if (!storeId) {
+    return res.status(400).json({ message: "Store Id required." });
+  }
   const { id } = req.body;
   //   Check if Productname and password are passed in the request
   if (!id)
     return res.status(400).json({ message: `Id parameter is required!` });
   // Check for duplicates
-  const foundProduct = await ProductsDB.findOne({ _id: id }).exec();
+  const foundProduct = await ProductsDB.findOne({ storeId, _id: id }).exec();
   if (!foundProduct)
     res.status(204).json({ message: `No Product with ProductId ${id} Found.` });
   await ProductsDB.deleteOne({ _id: id });
@@ -147,13 +164,17 @@ const deleteProduct = async (req, res) => {
     .json({ message: `product ${foundProduct.name} deleted successfully` });
 };
 const getProduct = async (req, res) => {
+  const { storeId } = req.params;
+  if (!storeId) {
+    return res.status(400).json({ message: "Store Id required." });
+  }
   const { id } = req.params;
   console.log("id", id);
   //   Check if id is passed in the request
   if (!id)
     return res.status(400).json({ message: `Id parameter is required!` });
   // Check if it exists
-  const foundProduct = await ProductsDB.findOne({ _id: id }).exec();
+  const foundProduct = await ProductsDB.findOne({ storeId, _id: id }).exec();
   if (!foundProduct)
     return res.status(400).json({ message: `No Product with the ProductId` });
   res.status(200).json({

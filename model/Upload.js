@@ -5,6 +5,10 @@ const uploadSchema = new Schema({
     type: String,
     required: true,
   },
+  storeId: {
+    type: String,
+    required: true,
+  },
   productImages: [
     {
       type: String,

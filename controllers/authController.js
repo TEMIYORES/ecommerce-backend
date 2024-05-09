@@ -10,6 +10,7 @@ export const handleStoreAuth = async (req, res) => {
     return res.status(400).json({ message: "email and password are required" });
   }
   const foundStore = await StoreDB.findOne({ email }).exec();
+  console.log({ foundStore });
   if (!foundStore) {
     return res
       .status(401)
@@ -68,7 +69,6 @@ export const handleStoreAuth = async (req, res) => {
   }
   foundStore.refreshToken = [...newRefreshTokenArray, newRefreshToken];
   await foundStore.save();
-  console.log("origin", req.origin);
   res.cookie("jwt", newRefreshToken, {
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000,

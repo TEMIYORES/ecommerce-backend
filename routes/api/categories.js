@@ -11,11 +11,11 @@ import ROLES_LIST from "../../config/roles_list.js";
 const router = express.Router();
 
 router
-  .route("/")
+  .route("/:storeId")
   .get(VerifyRoles(ROLES_LIST.Admin), getAllCategories)
   .post(VerifyRoles(ROLES_LIST.Admin), createNewCategory)
   .put(VerifyRoles(ROLES_LIST.Admin), updateCategory)
   .delete(VerifyRoles(ROLES_LIST.Admin), deleteCategory);
 
-router.route("/:id").get(VerifyRoles(ROLES_LIST.Admin), getCategory);
+router.route("/:storeId/:id").get(VerifyRoles(ROLES_LIST.Admin), getCategory);
 export default router;
