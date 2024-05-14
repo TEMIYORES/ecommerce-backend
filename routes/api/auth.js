@@ -1,7 +1,7 @@
 import express from "express";
-import handleUserAuth from "../../controllers/authController.js";
+import handleStoreAuth from "../../controllers/authController.js";
 const router = express.Router();
 
-router.route("/").post(handleUserAuth);
+router.route("/").post(handleStoreAuth);
 
 export default router;

@@ -10,7 +10,9 @@ const checkStore = async (req, res) => {
   const foundStore = await StoreDB.findOne({ storeName: store }).exec();
 
   if (foundStore) {
-    return res.status(200).json({ id: foundStore._id });
+    return res
+      .status(200)
+      .json({ id: foundStore._id, storeName: foundStore.storeName });
   } else {
     return res.status(400).json({ message: "No store with subdomain" });
   }

@@ -5,7 +5,7 @@ const corsOptions = {
       callback(null, true);
     } else if (
       origin.includes("localhost") ||
-      origin.includes("ecommart.netlify.app")
+      origin.includes(".ecommart.ng")
     ) {
       callback(null, true);
     } else {

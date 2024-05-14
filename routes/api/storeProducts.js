@@ -3,8 +3,8 @@ import {
   getAllCategoryProducts,
   getAllProducts,
   getFeaturedProduct,
-  getFilterCategoryProducts,
   getRecentProducts,
+  getSearchProducts,
   getSingleCategoryProducts,
   getSingleProduct,
 } from "../../controllers/storeProductsController.js";
@@ -16,9 +16,8 @@ router.route("/:storeId/products/categories").post(getAllCategoryProducts);
 router
   .route("/:storeId/products/categories/:categoryName")
   .post(getSingleCategoryProducts);
-router
-  .route("/:storeId/products/categories/:categoryName")
-  .post(getFilterCategoryProducts);
+
+router.route("/:storeId/products/search/:searchValue").post(getSearchProducts);
 router.route("/:storeId/product/:id").get(getSingleProduct);
 router.route("/:storeId/featured/:id").get(getFeaturedProduct);
 

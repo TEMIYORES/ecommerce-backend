@@ -62,7 +62,7 @@ const createNewProduct = async (req, res) => {
       imageUrls = await Promise.all(uploadImages(imageBuffers));
       console.log({ imageUrls });
     }
-    const newProduct = await ProductsDB.create({
+    await ProductsDB.create({
       storeId,
       name,
       description,

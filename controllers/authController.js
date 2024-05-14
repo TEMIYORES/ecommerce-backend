@@ -2,7 +2,7 @@ import StoreDB from "../model/Store.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-export const handleStoreAuth = async (req, res) => {
+const handleStoreAuth = async (req, res) => {
   const cookies = req.cookies;
   console.log("cookie available at login -", cookies?.jwt);
   const { email, password } = req.body;
