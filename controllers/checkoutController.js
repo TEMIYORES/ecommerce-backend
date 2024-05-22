@@ -1,11 +1,14 @@
 import ProductsDB from "../model/Product.js";
 import OrdersDB from "../model/Order.js";
+import StoreDB from "../model/Store.js";
 import https from "https";
 import axios from "axios";
 const checkout = async (req, res) => {
   console.log(req.body);
-
   const {
+    storeId,
+    accountId,
+    origin,
     name,
     email,
     phoneNumber,
@@ -15,6 +18,12 @@ const checkout = async (req, res) => {
     country,
     products,
   } = req.body;
+  if (!storeId || !accountId || !origin) {
+    return res.status(400).json({
+      message: `storeId and accountId parameters are required. please reload`,
+    });
+  }
+  const Store = await StoreDB.findOne({ _id: storeId }).exec();
   const uniqueIds = [...new Set(products)];
   console.log({ uniqueIds });
   const foundProducts = await ProductsDB.find({ _id: uniqueIds });
@@ -58,7 +67,7 @@ const checkout = async (req, res) => {
     email: email,
     amount: totalOrderAmount * 100,
     currency: "NGN",
-    callback_url: "https://ecommart.netlify.app",
+    callback_url: origin,
   });
 
   const options = {
@@ -86,6 +95,8 @@ const checkout = async (req, res) => {
         const paymentReference = parsedData.data.reference;
         await OrdersDB.create({
           _id: paymentReference,
+          storeId,
+          accountId,
           orderData,
           totalAmount: totalOrderAmount,
           customerInformation,
@@ -103,7 +114,8 @@ const checkout = async (req, res) => {
   paystackReq.end();
 };
 const verifyCheckout = async (req, res) => {
-  const { id } = req.body;
+  const { storeId, accountId, id } = req.body;
+  console.log(req.body);
   if (!id)
     return res.status(400).json({ message: `Id parameter is required!` });
 
