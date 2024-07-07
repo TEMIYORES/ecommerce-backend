@@ -1,6 +1,6 @@
 import ProductsDB from "../model/Product.js";
 import CategoriesDB from "../model/Category.js";
-import WishListDB from "../model/WishList.js";
+import SettingDB from "../model/Setting.js";
 const getRecentProducts = async (req, res) => {
   const { storeId } = req.params;
   if (!storeId)
@@ -147,13 +147,24 @@ const getSingleCategoryProducts = async (req, res) => {
 };
 
 const getFeaturedProduct = async (req, res) => {
-  const { id, storeId } = req.params;
+  const { storeId } = req.params;
   //   Check if id is passed in the request
-  if (!storeId || !id)
-    return res
-      .status(400)
-      .json({ message: `Store Id and Product Id parameter is required!` });
+  if (!storeId)
+    return res.status(400).json({
+      message: `Store Id parameter is required. Please reload the page`,
+    });
   // Check if it exists
+  const settingDoc = await SettingDB.findOne({ storeId }).exec();
+  let id = "";
+  if (settingDoc) {
+    id = settingDoc.settings.featuredProductId;
+  } else {
+    const firstProduct = ProductsDB.findOne({ storeId });
+    if (firstProduct) {
+      id = firstProduct._id;
+    }
+  }
+  console.log({ id });
   const foundProduct = await ProductsDB.findOne({ _id: id, storeId }).exec();
   if (!foundProduct)
     return res.status(400).json({ message: `No Product with the ProductId` });

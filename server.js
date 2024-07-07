@@ -5,26 +5,25 @@ import { logger } from "./middleware/LogEvent.js";
 import errHandler from "./middleware/errorhandler.js";
 import rootRouter from "./routes/root.js";
 import subdirRouter from "./routes/subdir.js";
-import registerRoute from "./routes/api/register.js";
+import dashboardAuthRoute from "./routes/api/dashboard/auth.js";
+import storeAccountRoute from "./routes/api/dashboard/store.js";
 import waitListRoute from "./routes/api/waitlist.js";
-import authRouter from "./routes/api/auth.js";
-import refreshRoute from "./routes/api/refreshToken.js";
-import logoutRouter from "./routes/api/logout.js";
-import storesRouter from "./routes/api/store.js";
-import productRouter from "./routes/api/products.js";
-import categoryRouter from "./routes/api/categories.js";
-import uploadRouter from "./routes/api/uploads.js";
+import storesRouter from "./routes/api/dashboard/store.js";
+import productRouter from "./routes/api/dashboard/products.js";
+import settingsRouter from "./routes/api/dashboard/settings.js";
+import categoryRouter from "./routes/api/dashboard/categories.js";
+import uploadRouter from "./routes/api/dashboard/uploads.js";
 import storeProductsRouter from "./routes/api/storeProducts.js";
 import cartRouter from "./routes/api/cart.js";
 import wishListRouter from "./routes/api/wishList.js";
 import storeCategoriesRouter from "./routes/api/storeCategories.js";
 import checkoutRouter from "./routes/api/checkout.js";
-import orderRouter from "./routes/api/order.js";
-import accountRouter from "./routes/api/account.js";
+import orderRouter from "./routes/api/dashboard/order.js";
+import storeAuthRoute from "./routes/api/store/auth.js";
 import addressRouter from "./routes/api/address.js";
+import shippingFeeRouter from "./routes/api/shippingFee.js";
 import checkStoreRouter from "./routes/api/checkStore.js";
 import corsOptions from "./config/corsOptions.js";
-import VerifyJWT from "./middleware/verifyJwt.js";
 import cookieParser from "cookie-parser";
 import credentials from "./middleware/credentials.js";
 import cloudinary from "cloudinary";
@@ -34,6 +33,7 @@ import dotenv from "dotenv";
 import { fileURLToPath } from "url";
 // Get the current file's URL
 const __filename = fileURLToPath(import.meta.url);
+dotenv.config();
 
 // Get the directory name
 import { dirname } from "path";
@@ -44,8 +44,6 @@ cloudinary.config({
   api_key: process.env.CLOUDINARY_SECRET_API_KEY,
   api_secret: process.env.CLOUDINARY_SECRET_KEY,
 });
-
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3500;
@@ -77,26 +75,31 @@ app.use("/subdir", express.static(path.join(__dirname, "public")));
 
 // Routes
 app.use("/api", rootRouter);
-app.use("/api/register", registerRoute);
-app.use("/api/waitlist", waitListRoute);
-app.use("/api/auth", authRouter);
-app.use("/api/refresh", refreshRoute);
-app.use("/api/logout", logoutRouter);
-app.use("/api/store", storeProductsRouter);
-app.use("/api/cart", cartRouter);
-app.use("/api/wishlist", wishListRouter);
-app.use("/api/storecategories", storeCategoriesRouter);
-app.use("/api/customerorder", orderRouter);
-app.use("/api/account", accountRouter);
-app.use("/api/address", addressRouter);
-app.use("/api/checkout", checkoutRouter);
-app.use("/api/checkstore", checkStoreRouter);
-app.use(VerifyJWT);
+
+// Store Apis
+app.use("/api/store/auth", storeAuthRoute);
+
+app.use("/api/store/waitlist", waitListRoute);
+app.use("/api/store/products", storeProductsRouter);
+app.use("/api/store/cart", cartRouter);
+app.use("/api/store/wishlist", wishListRouter);
+app.use("/api/store/categories", storeCategoriesRouter);
+app.use("/api/store/customerorder", orderRouter);
+app.use("/api/store/address", addressRouter);
+app.use("/api/store/checkout", checkoutRouter);
+app.use("/api/store/checkstore", checkStoreRouter);
+app.use("/api/store/shippingFee", shippingFeeRouter);
+
+// Dashboard Apis
+app.use("/api/dashboard/auth", dashboardAuthRoute);
+app.use("/api/dashboard/store", storeAccountRoute);
+app.use("/api/dashboard/products", productRouter);
+app.use("/api/dashboard/categories", categoryRouter);
+app.use("/api/dashboard/orders", orderRouter);
+app.use("/api/dashboard/settings", settingsRouter);
+
 app.use("/api/stores", storesRouter);
-app.use("/api/products", productRouter);
-app.use("/api/categories", categoryRouter);
 app.use("/api/uploads", uploadRouter);
-app.use("/api/orders", orderRouter);
 app.use("/subdir", subdirRouter);
 
 app.all("*", (req, res) => {

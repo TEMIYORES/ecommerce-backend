@@ -1,4 +1,5 @@
-import CategoriesDB from "../model/Category.js";
+import { response } from "express";
+import CategoriesDB from "../../model/Category.js";
 
 export const getAllCategories = async (req, res) => {
   const { storeId } = req.params;
@@ -39,6 +40,7 @@ export const createNewCategory = async (req, res) => {
       .json({ message: "Category with the name already exists!" });
   try {
     const newCategory = await CategoriesDB.create({
+      storeId,
       name,
       parentCategory: parentCategory || null,
       properties: properties,

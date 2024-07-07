@@ -26,6 +26,12 @@ const orderSchema = new Schema(
       type: Number,
       required: true,
     },
+    shippingFee: {
+      type: Number,
+    },
+    transactionFee: {
+      type: Number,
+    },
     paid: {
       type: Boolean,
       default: false,

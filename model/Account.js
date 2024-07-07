@@ -13,11 +13,19 @@ const accountSchema = new Schema(
     orderData: {
       type: Array,
     },
-    name: {
+    fullName: {
       type: String,
       required: true,
     },
     email: {
+      type: String,
+      required: true,
+    },
+    photoURL: {
+      type: String,
+      required: true,
+    },
+    emailVerified: {
       type: String,
       required: true,
     },
@@ -26,19 +34,8 @@ const accountSchema = new Schema(
       required: true,
     },
     phoneNumber: {
-      phone: String,
-      details: {
-        country: String,
-        code: String,
-        number: String,
-      },
-    },
-    refreshToken: [String],
-    roles: {
-      User: {
-        type: String,
-        default: "5677",
-      },
+      type: String,
+      required: true,
     },
   },
   {

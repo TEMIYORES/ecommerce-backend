@@ -9,7 +9,7 @@ const saveAddressData = async (req, res) => {
     phoneNumber,
     streetAddress,
     city,
-    postalCode,
+    state,
     country,
   } = req.body;
   console.log(req.body);
@@ -28,7 +28,7 @@ const saveAddressData = async (req, res) => {
     foundAddress.phoneNumber = phoneNumber;
     foundAddress.streetAddress = streetAddress;
     foundAddress.city = city;
-    foundAddress.postalCode = postalCode;
+    foundAddress.state = state;
     foundAddress.country = country;
 
     await foundAddress.save();
@@ -46,7 +46,7 @@ const saveAddressData = async (req, res) => {
       phoneNumber,
       streetAddress,
       city,
-      postalCode,
+      state,
       country,
     });
 
@@ -74,15 +74,6 @@ const getAddressData = async (req, res) => {
   if (!foundAddress) {
     return res.status(400).json({ message: `No address found` });
   }
-  // const result = {
-  //   name: foundAddress.name,
-  //   email: foundAddress.email,
-  //   phoneNumber: foundAddress.phoneNumber.phone,
-  //   city: foundAddress.city,
-  //   postalCode: foundAddress.postalCode,
-  //   streetAddress: foundAddress.streetAddress,
-  //   country: foundAddress.country,
-  // };
   return res.status(200).json(foundAddress);
 };
 

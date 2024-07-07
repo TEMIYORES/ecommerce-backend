@@ -8,7 +8,6 @@ const __filename = fileURLToPath(import.meta.url);
 // Get the directory name
 import { dirname } from "path";
 const __dirname = dirname(__filename);
-
 const handleWaitlist = async (req, res) => {
   const { email } = req.body;
   if (!email) {

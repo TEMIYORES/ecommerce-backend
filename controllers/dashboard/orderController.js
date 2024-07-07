@@ -1,4 +1,4 @@
-import OrdersDB from "../model/Order.js";
+import OrdersDB from "../../model/Order.js";
 const getAllCustomerOrders = async (req, res) => {
   const { storeId, accountId } = req.body;
   if (!storeId || !accountId) {
@@ -26,7 +26,7 @@ const getAllOrders = async (req, res) => {
   if (!storeId) {
     return res.status(400).json({ message: "Store Id required." });
   }
-  const allOrders = await OrdersDB.find({}, null, {
+  const allOrders = await OrdersDB.find({ storeId }, null, {
     sort: { updatedAt: -1 },
   });
   if (!allOrders) return res.status(204).json({ message: "No Orders found." });
@@ -58,6 +58,8 @@ const getOrder = async (req, res) => {
     customerInformation: foundorder.customerInformation,
     orderData: foundorder.orderData,
     totalAmount: foundorder.totalAmount,
+    transactionFee: foundorder.transactionFee,
+    shippingFee: foundorder.shippingFee,
     status: foundorder.paid,
     date: foundorder.updatedAt,
   };

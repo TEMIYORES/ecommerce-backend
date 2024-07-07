@@ -13,22 +13,24 @@ const checkout = async (req, res) => {
     email,
     phoneNumber,
     city,
-    postalCode,
+    state,
     streetAddress,
     country,
     products,
+    shippingFee,
+    transactionFee,
   } = req.body;
   if (!storeId || !accountId || !origin) {
     return res.status(400).json({
       message: `storeId and accountId parameters are required. please reload`,
     });
   }
-  const Store = await StoreDB.findOne({ _id: storeId }).exec();
+  // const Store = await StoreDB.findOne({ _id: storeId }).exec();
   const uniqueIds = [...new Set(products)];
   console.log({ uniqueIds });
   const foundProducts = await ProductsDB.find({ _id: uniqueIds });
   let orderData = [];
-  let totalOrderAmount = 0;
+  let totalOrderAmount = 0 + shippingFee + transactionFee;
   for (const productId of uniqueIds) {
     const product = foundProducts.find((p) => p._id.toString() === productId);
     const productQuantity = products.filter((id) => id === productId).length;
@@ -58,7 +60,7 @@ const checkout = async (req, res) => {
     email,
     phoneNumber,
     city,
-    postalCode,
+    state,
     streetAddress,
     country,
   };
@@ -100,6 +102,8 @@ const checkout = async (req, res) => {
           orderData,
           totalAmount: totalOrderAmount,
           customerInformation,
+          shippingFee,
+          transactionFee,
         });
         return res.status(200).json({ paymentUrl });
       });

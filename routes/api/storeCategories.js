@@ -5,7 +5,7 @@ import {
 } from "../../controllers/storeCategoriesController.js";
 
 const router = express.Router();
-router.route("/:storeId/categories").get(getAllStoreCategories);
-router.route("/:storeId/categories/:categoryName").get(getCategory);
+router.route("/:storeId").get(getAllStoreCategories);
+router.route("/:storeId/:categoryName").get(getCategory);
 
 export default router;

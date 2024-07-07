@@ -10,15 +10,15 @@ import {
 } from "../../controllers/storeProductsController.js";
 
 const router = express.Router();
-router.route("/:storeId/products/recents").get(getRecentProducts);
-router.route("/:storeId/products").get(getAllProducts);
-router.route("/:storeId/products/categories").post(getAllCategoryProducts);
+router.route("/:storeId/recents").get(getRecentProducts);
+router.route("/:storeId").get(getAllProducts);
+router.route("/:storeId/categories").post(getAllCategoryProducts);
 router
-  .route("/:storeId/products/categories/:categoryName")
+  .route("/:storeId/categories/:categoryName")
   .post(getSingleCategoryProducts);
 
-router.route("/:storeId/products/search/:searchValue").post(getSearchProducts);
-router.route("/:storeId/product/:id").get(getSingleProduct);
-router.route("/:storeId/featured/:id").get(getFeaturedProduct);
+router.route("/:storeId/search/:searchValue").post(getSearchProducts);
+router.route("/:storeId/:id").get(getSingleProduct);
+router.route("/:storeId/featured").get(getFeaturedProduct);
 
 export default router;

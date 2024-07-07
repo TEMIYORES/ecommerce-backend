@@ -27,7 +27,7 @@ const addressSchema = new Schema(
     city: {
       type: String,
     },
-    postalCode: {
+    state: {
       type: String,
     },
     streetAddress: {

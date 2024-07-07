@@ -9,6 +9,7 @@ export const getAllStoreCategories = async (req, res) => {
   const allCategories = await CategoriesDB.find({
     storeId,
   });
+  console.log({ allCategories });
   if (!allCategories)
     return res.status(204).json({ message: "No Categories found." });
   const result = allCategories.map((category) => {
