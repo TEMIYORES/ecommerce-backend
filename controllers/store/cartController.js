@@ -1,4 +1,4 @@
-import ProductsDB from "../model/Product.js";
+import ProductsDB from "../../model/Product.js";
 const getAllCartProducts = async (req, res) => {
   const { ids, storeId } = req.body;
   if (!storeId || !ids)

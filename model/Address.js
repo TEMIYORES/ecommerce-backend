@@ -6,7 +6,7 @@ const addressSchema = new Schema(
       type: String,
       required: true,
     },
-    accountId:{
+    accountId: {
       type: String,
       required: true,
     },
@@ -17,12 +17,7 @@ const addressSchema = new Schema(
       type: String,
     },
     phoneNumber: {
-      phone: String,
-      details: {
-        country: String,
-        code: String,
-        number: String,
-      },
+      type: String,
     },
     city: {
       type: String,

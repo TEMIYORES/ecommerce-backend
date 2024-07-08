@@ -1,11 +1,9 @@
 import express from "express";
 
-import VerifyRoles from "../../../middleware/VerifyRole.js";
-import ROLES_LIST from "../../../config/roles_list.js";
 import {
   createNewUpload,
   getUpload,
-} from "../../../controllers/uploadController.js";
+} from "../../../controllers/dashboard/uploadController.js";
 import fileUpload from "express-fileupload";
 import filesPayloadExists from "../../../middleware/filesPayloadExists.js";
 import fileExtLimiter from "../../../middleware/fileExtLimiter.js";

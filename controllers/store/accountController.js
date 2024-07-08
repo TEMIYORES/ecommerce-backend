@@ -3,10 +3,9 @@ import bcrypt from "bcrypt";
 
 const createAccount = async (req, res) => {
   console.log(req.body);
-  const { storeId, fullName, email, password, phoneNumber } =
-    req.body;
+  const { storeId, fullName, email, password, phoneNumber } = req.body;
 
-  if ((!storeId || !email || !fullName || !password ||!phoneNumber)) {
+  if (!storeId || !email || !fullName || !password || !phoneNumber) {
     return res.status(400).json({
       message:
         "account Id, account Name and all other fields are required, please reload.",
@@ -34,9 +33,10 @@ const createAccount = async (req, res) => {
     });
 
     console.log({ newAccount });
-    return res
-      .status(201)
-      .json({ message: `${fullName} account registered successfully!` });
+    return res.status(201).json({
+      status: 201,
+      message: `${fullName} account registered successfully!`,
+    });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
@@ -51,6 +51,7 @@ const loginAccount = async (req, res) => {
   }
   try {
     const account = await Account.findOne({ storeId, email }).exec();
+    console.log({ account });
     if (!account) {
       return res.status(404).json({ message: "Account account not found." });
     }

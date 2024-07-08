@@ -1,4 +1,4 @@
-import AddressDB from "../model/Address.js";
+import AddressDB from "../../model/Address.js";
 
 const saveAddressData = async (req, res) => {
   const {
@@ -39,15 +39,7 @@ const saveAddressData = async (req, res) => {
 
   try {
     const newAddress = await AddressDB.create({
-      storeId,
-      accountId,
-      name,
-      email,
-      phoneNumber,
-      streetAddress,
-      city,
-      state,
-      country,
+      ...req.body,
     });
 
     console.log({ newAddress });

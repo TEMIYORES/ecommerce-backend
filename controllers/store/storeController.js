@@ -1,4 +1,4 @@
-import StoreDB from "../model/Store.js";
+import StoreDB from "../../model/Store.js";
 const getAllStore = async (req, res) => {
   const allStore = await StoreDB.find();
   if (!allStore) return res.status(204).json({ message: "No Store found." });

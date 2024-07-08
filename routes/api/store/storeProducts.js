@@ -7,7 +7,7 @@ import {
   getSearchProducts,
   getSingleCategoryProducts,
   getSingleProduct,
-} from "../../controllers/storeProductsController.js";
+} from "../../../controllers/store/storeProductsController.js";
 
 const router = express.Router();
 router.route("/:storeId").get(getAllProducts);

@@ -3,7 +3,7 @@ import express from "express";
 import {
   checkout,
   verifyCheckout,
-} from "../../controllers/checkoutController.js";
+} from "../../../controllers/store/checkoutController.js";
 
 const router = express.Router();
 router.route("/").post(checkout);

@@ -1,4 +1,4 @@
-import UploadsDB from "../model/Upload.js";
+import UploadsDB from "../../model/Upload.js";
 import { v2 as cloudinary } from "cloudinary";
 const UPLOAD_LENGTH = 4;
 const getUpload = async (req, res) => {
@@ -82,7 +82,4 @@ const createNewUpload = async (req, res) => {
 //   stream.push(null); // Indicates the end of the stream
 //   return stream;
 // }
-export {
-  createNewUpload,
-  getUpload,
-};
+export { createNewUpload, getUpload };

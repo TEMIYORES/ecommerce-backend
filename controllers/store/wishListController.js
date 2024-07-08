@@ -1,5 +1,5 @@
-import WishListDB from "../model/WishList.js";
-import ProductsDB from "../model/Product.js";
+import WishListDB from "../../model/WishList.js";
+import ProductsDB from "../../model/Product.js";
 const saveWishProduct = async (req, res) => {
   const { wished, storeId, accountId, productId } = req.body;
   if (!storeId || !accountId || !productId)

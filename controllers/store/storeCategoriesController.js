@@ -1,4 +1,4 @@
-import CategoriesDB from "../model/Category.js";
+import CategoriesDB from "../../model/Category.js";
 
 export const getAllStoreCategories = async (req, res) => {
   const { storeId } = req.params;

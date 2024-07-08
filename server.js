@@ -13,16 +13,16 @@ import productRouter from "./routes/api/dashboard/products.js";
 import settingsRouter from "./routes/api/dashboard/settings.js";
 import categoryRouter from "./routes/api/dashboard/categories.js";
 import uploadRouter from "./routes/api/dashboard/uploads.js";
-import storeProductsRouter from "./routes/api/storeProducts.js";
-import cartRouter from "./routes/api/cart.js";
-import wishListRouter from "./routes/api/wishList.js";
-import storeCategoriesRouter from "./routes/api/storeCategories.js";
-import checkoutRouter from "./routes/api/checkout.js";
-import orderRouter from "./routes/api/dashboard/order.js";
+import storeProductsRouter from "./routes/api/store/storeProducts.js";
+import cartRouter from "./routes/api/store/cart.js";
+import wishListRouter from "./routes/api/store/wishList.js";
+import storeCategoriesRouter from "./routes/api/store/storeCategories.js";
+import checkoutRouter from "./routes/api/store/checkout.js";
+import orderRouter from "./routes/api/store/order.js";
 import storeAuthRoute from "./routes/api/store/auth.js";
-import addressRouter from "./routes/api/address.js";
-import shippingFeeRouter from "./routes/api/shippingFee.js";
-import checkStoreRouter from "./routes/api/checkStore.js";
+import addressRouter from "./routes/api/store/address.js";
+import shippingFeeRouter from "./routes/api/store/shippingFee.js";
+import checkStoreRouter from "./routes/api/store/checkStore.js";
 import corsOptions from "./config/corsOptions.js";
 import cookieParser from "cookie-parser";
 import credentials from "./middleware/credentials.js";
@@ -78,6 +78,7 @@ app.use("/api", rootRouter);
 
 // Store Apis
 app.use("/api/store/auth", storeAuthRoute);
+app.use("/api/store/orders", orderRouter);
 
 app.use("/api/store/waitlist", waitListRoute);
 app.use("/api/store/products", storeProductsRouter);
@@ -95,7 +96,6 @@ app.use("/api/dashboard/auth", dashboardAuthRoute);
 app.use("/api/dashboard/store", storeAccountRoute);
 app.use("/api/dashboard/products", productRouter);
 app.use("/api/dashboard/categories", categoryRouter);
-app.use("/api/dashboard/orders", orderRouter);
 app.use("/api/dashboard/settings", settingsRouter);
 
 app.use("/api/stores", storesRouter);

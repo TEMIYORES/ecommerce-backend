@@ -1,6 +1,5 @@
-import ProductsDB from "../model/Product.js";
-import OrdersDB from "../model/Order.js";
-import StoreDB from "../model/Store.js";
+import ProductsDB from "../../model/Product.js";
+import OrdersDB from "../../model/Order.js";
 import https from "https";
 import axios from "axios";
 const checkout = async (req, res) => {

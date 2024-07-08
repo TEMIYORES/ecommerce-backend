@@ -1,4 +1,4 @@
-import StoreDB from "../model/Store.js";
+import StoreDB from "../../model/Store.js";
 
 const checkStore = async (req, res) => {
   const { subdomain } = req.params;

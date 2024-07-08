@@ -3,7 +3,7 @@ import {
   getWishListIds,
   getWishListProducts,
   saveWishProduct,
-} from "../../controllers/wishListController.js";
+} from "../../../controllers/store/wishListController.js";
 
 const router = express.Router();
 router.route("/").post(saveWishProduct);

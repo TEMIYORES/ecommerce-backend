@@ -1,6 +1,6 @@
-import ProductsDB from "../model/Product.js";
-import CategoriesDB from "../model/Category.js";
-import SettingDB from "../model/Setting.js";
+import ProductsDB from "../../model/Product.js";
+import CategoriesDB from "../../model/Category.js";
+import SettingDB from "../../model/Setting.js";
 const getRecentProducts = async (req, res) => {
   const { storeId } = req.params;
   if (!storeId)

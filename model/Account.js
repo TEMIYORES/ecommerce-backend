@@ -41,5 +41,15 @@ const accountSchema = new Schema(
     timestamps: true,
   }
 );
+// Method to exclude the password
+accountSchema.methods.toJSON = function () {
+  const account = this.toObject();
+  account.id = account._id;
+  delete account._id;
+  delete account.password;
+  delete account.createdAt;
+  delete account.updatedAt;
+  return account;
+};
 
 export default mongoose.model("Account", accountSchema);
