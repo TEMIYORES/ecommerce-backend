@@ -23,10 +23,9 @@ const accountSchema = new Schema(
     },
     photoURL: {
       type: String,
-      required: true,
     },
     emailVerified: {
-      type: String,
+      type: Boolean,
       required: true,
     },
     password: {

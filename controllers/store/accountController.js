@@ -3,10 +3,10 @@ import bcrypt from "bcrypt";
 
 const createAccount = async (req, res) => {
   console.log(req.body);
-  const { storeId, accountName, fullName, email, password, phoneNumber } =
+  const { storeId, fullName, email, password, phoneNumber } =
     req.body;
 
-  if ((!storeId, !accountName, !email || !fullName || !password)) {
+  if ((!storeId || !email || !fullName || !password ||!phoneNumber)) {
     return res.status(400).json({
       message:
         "account Id, account Name and all other fields are required, please reload.",
