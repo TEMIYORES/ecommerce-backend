@@ -148,6 +148,7 @@ const getSingleCategoryProducts = async (req, res) => {
 
 const getFeaturedProduct = async (req, res) => {
   const { storeId } = req.params;
+  console.log({ storeId });
   //   Check if id is passed in the request
   if (!storeId)
     return res.status(400).json({
@@ -166,10 +167,11 @@ const getFeaturedProduct = async (req, res) => {
   }
   console.log({ id });
   const foundProduct = await ProductsDB.findOne({ _id: id, storeId }).exec();
+  console.log({ foundProduct });
   if (!foundProduct)
     return res.status(400).json({ message: `No Product with the ProductId` });
   res.status(200).json({
-    id: foundProduct._id,
+    id: foundProduct?._id,
     name: foundProduct?.name,
     description: foundProduct.description,
     // price: foundProduct?.price,

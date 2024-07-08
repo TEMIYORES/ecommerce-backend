@@ -3,7 +3,8 @@ import bcrypt from "bcrypt";
 
 const createAccount = async (req, res) => {
   console.log(req.body);
-  const { storeId, accountName, fullName, email, password, phoneNumber } = req.body;
+  const { storeId, accountName, fullName, email, password, phoneNumber } =
+    req.body;
 
   if ((!storeId, !accountName, !email || !fullName || !password)) {
     return res.status(400).json({
@@ -42,7 +43,7 @@ const createAccount = async (req, res) => {
 };
 
 const loginAccount = async (req, res) => {
-  const { email } = req.body;
+  const { storeId, email } = req.body;
   if (!email) {
     return res.status(400).json({
       message: "Email is required",
@@ -63,7 +64,7 @@ const loginAccount = async (req, res) => {
   }
 };
 const verifyAccount = async (req, res) => {
-  const { email } = req.params;
+  const { storeId, email } = req.params;
   if (!email) {
     return res.status(400).json({
       message: "email is required",

@@ -4,11 +4,11 @@ import {
   createAccount,
   loginAccount,
   updateAccount,
-  verifyAccount
+  verifyAccount,
 } from "../../../controllers/store/accountController.js";
 
 const router = express.Router();
-router.route("/:email").post(verifyAccount);
+router.route("/:storeId/:email").get(verifyAccount);
 router.route("/register").post(createAccount);
 router.route("/login").post(loginAccount);
 router.route("/update").put(updateAccount);
