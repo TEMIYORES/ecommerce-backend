@@ -1,29 +1,46 @@
 import WishListDB from "../../model/WishList.js";
-import ProductsDB from "../../model/Product.js";
 const saveWishProduct = async (req, res) => {
-  const { wished, storeId, accountId, productId } = req.body;
+  const { storeId, accountId, productId } = req.body;
   if (!storeId || !accountId || !productId)
     return res
       .status(400)
       .json({ message: `Store Id and other parameters are required!` });
 
-  const foundProduct = await WishListDB.findOne({
+  const foundWishListAccount = await WishListDB.findOne({
     storeId,
     accountId,
-    productId,
   }).exec();
   // If product is found in wishlist then we should delete it, if not create it.
-  if (foundProduct) {
-    await WishListDB.deleteOne({ storeId, accountId, productId });
-    return res
-      .status(200)
-      .json({ saved: false, message: `product removed from wishlist` });
+  if (foundWishListAccount) {
+    const duplicate = foundWishListAccount.productIds.filter(
+      (id) => id == productId
+    );
+    console.log({ ids: foundWishListAccount.productIds });
+    console.log({ duplicate });
+    if (duplicate.length) {
+      const newIds = foundWishListAccount.productIds.filter(
+        (id) => id != productId
+      );
+      foundWishListAccount.productIds = newIds;
+      foundWishListAccount.save();
+      return res
+        .status(200)
+        .json({ saved: false, message: `product removed from wishlist` });
+    } else {
+      foundWishListAccount.productIds.push(productId);
+      foundWishListAccount.save();
+      return res
+        .status(201)
+        .json({ saved: true, message: "Product saved to wishlist!" });
+    }
   } else {
-    await WishListDB.create({
+    const wishlistAccount = await WishListDB.create({
       storeId,
       accountId,
-      productId,
     });
+    wishlistAccount.productIds.push(productId);
+    await wishlistAccount.save();
+    console.log({ this: wishlistAccount });
     return res
       .status(201)
       .json({ saved: true, message: "Product saved to wishlist!" });
@@ -31,50 +48,44 @@ const saveWishProduct = async (req, res) => {
 };
 const getWishListIds = async (req, res) => {
   const { storeId, accountId } = req.body;
-  if (!storeId)
-    return res.status(400).json({ message: `Store Id parameter is required!` });
-  const allProducts = await ProductsDB.find({ storeId }, null, {
-    sort: { _id: -1 },
-    limit: 10,
+  if (!storeId || !accountId)
+    return res
+      .status(400)
+      .json({ message: `Store Id and account Id parameters are required!` });
+
+  const wishListAccount = await WishListDB.findOne({
+    storeId,
+    accountId,
   });
-  if (!allProducts)
-    return res.status(204).json({ message: "No Products found." });
+  console.log({ wishListAccount });
   let result = [];
-  if (accountId) {
-    const wishedProducts = await WishListDB.find({
-      storeId,
-      accountId,
-      productId: allProducts.map((product) => product.id.toString()),
-    });
-    result = wishedProducts.map((product) => {
-      return product.productId;
-    });
+  if (wishListAccount) {
+    result = [...wishListAccount.productIds];
   }
   res.status(200).json(result);
 };
+
 const getWishListProducts = async (req, res) => {
   const { storeId, accountId } = req.body;
-  if (!storeId)
-    return res.status(400).json({ message: `Store Id parameter is required!` });
-  const allProducts = await ProductsDB.find({ storeId }, null, {
-    sort: { _id: -1 },
-    limit: 10,
-  });
-  if (!allProducts)
-    return res.status(204).json({ message: "No Products found." });
+  if (!storeId || !accountId)
+    return res
+      .status(400)
+      .json({ message: `Store Id and account Id parameter is required!` });
+
+  const wishListAccount = await WishListDB.findOne({
+    storeId,
+    accountId,
+  }).populate("productIds");
+
   let result = [];
-  if (accountId) {
-    const wishedProducts = await WishListDB.find({
-      storeId,
-      accountId,
-      productId: allProducts.map((product) => product.id.toString()),
-    }).populate("productId");
-    result = wishedProducts.map((product) => {
+  if (wishListAccount) {
+    console.log({ ids: wishListAccount.productIds });
+    result = wishListAccount.productIds.map((product) => {
       return {
-        id: product.productId._id,
-        name: product.productId.name,
-        price: product.productId.price,
-        productImage: product.productId.productImages[0],
+        id: product._id,
+        name: product.name,
+        price: product.price,
+        productImage: product.productImages[0],
       };
     });
   }

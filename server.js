@@ -12,13 +12,13 @@ import storesRouter from "./routes/api/dashboard/store.js";
 import productRouter from "./routes/api/dashboard/products.js";
 import settingsRouter from "./routes/api/dashboard/settings.js";
 import categoryRouter from "./routes/api/dashboard/categories.js";
-import uploadRouter from "./routes/api/dashboard/uploads.js";
 import storeProductsRouter from "./routes/api/store/storeProducts.js";
 import cartRouter from "./routes/api/store/cart.js";
 import wishListRouter from "./routes/api/store/wishList.js";
 import storeCategoriesRouter from "./routes/api/store/storeCategories.js";
 import checkoutRouter from "./routes/api/store/checkout.js";
-import orderRouter from "./routes/api/store/order.js";
+import storeOrderRouter from "./routes/api/store/order.js";
+import dashboardOrderRouter from "./routes/api/dashboard/order.js";
 import storeAuthRoute from "./routes/api/store/auth.js";
 import addressRouter from "./routes/api/store/address.js";
 import shippingFeeRouter from "./routes/api/store/shippingFee.js";
@@ -78,14 +78,13 @@ app.use("/api", rootRouter);
 
 // Store Apis
 app.use("/api/store/auth", storeAuthRoute);
-app.use("/api/store/orders", orderRouter);
+app.use("/api/store/orders", storeOrderRouter);
 
 app.use("/api/store/waitlist", waitListRoute);
 app.use("/api/store/products", storeProductsRouter);
 app.use("/api/store/cart", cartRouter);
 app.use("/api/store/wishlist", wishListRouter);
 app.use("/api/store/categories", storeCategoriesRouter);
-app.use("/api/store/customerorder", orderRouter);
 app.use("/api/store/address", addressRouter);
 app.use("/api/store/checkout", checkoutRouter);
 app.use("/api/store/checkstore", checkStoreRouter);
@@ -94,12 +93,12 @@ app.use("/api/store/shippingFee", shippingFeeRouter);
 // Dashboard Apis
 app.use("/api/dashboard/auth", dashboardAuthRoute);
 app.use("/api/dashboard/store", storeAccountRoute);
+app.use("/api/dashboard/orders", dashboardOrderRouter);
 app.use("/api/dashboard/products", productRouter);
 app.use("/api/dashboard/categories", categoryRouter);
 app.use("/api/dashboard/settings", settingsRouter);
 
 app.use("/api/stores", storesRouter);
-app.use("/api/uploads", uploadRouter);
 app.use("/subdir", subdirRouter);
 
 app.all("*", (req, res) => {
