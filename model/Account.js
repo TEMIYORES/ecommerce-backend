@@ -26,6 +26,7 @@ const accountSchema = new Schema(
     },
     emailVerified: {
       type: Boolean,
+      default: false,
       required: true,
     },
     password: {

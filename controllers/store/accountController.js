@@ -88,20 +88,20 @@ const verifyAccount = async (req, res) => {
 
 const updateAccount = async (req, res) => {
   const { storeId, email, phoneNumber, emailVerified, photoURL } = req.body;
-  if (!email) {
+  console.log("update", req.body);
+  if (!storeId || !email) {
     return res.status(400).json({
-      message: "Email is required.",
+      message: "storeId and email are required.",
     });
   }
-  console.log("updating...");
-  console.log(req.body);
   try {
     const account = await Account.findOne({ storeId, email }).exec();
     console.log({ account });
     if (phoneNumber && account.phoneNumber === null)
       account.phoneNumber = phoneNumber;
-    if (emailVerified) account.emailVerified = emailVerified;
     if (photoURL && account.photoURL === null) account.photoURL = photoURL;
+    if (!emailVerified && !account.emailVerified)
+      account.emailVerified = emailVerified;
     await account.save();
     return res.sendStatus(204);
   } catch (error) {

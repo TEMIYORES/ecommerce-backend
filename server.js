@@ -13,6 +13,7 @@ import productRouter from "./routes/api/dashboard/products.js";
 import settingsRouter from "./routes/api/dashboard/settings.js";
 import categoryRouter from "./routes/api/dashboard/categories.js";
 import storeProductsRouter from "./routes/api/store/storeProducts.js";
+import reviewsRouter from "./routes/api/store/review.js";
 import cartRouter from "./routes/api/store/cart.js";
 import wishListRouter from "./routes/api/store/wishList.js";
 import storeCategoriesRouter from "./routes/api/store/storeCategories.js";
@@ -82,6 +83,7 @@ app.use("/api/store/orders", storeOrderRouter);
 
 app.use("/api/store/waitlist", waitListRoute);
 app.use("/api/store/products", storeProductsRouter);
+app.use("/api/store/reviews", reviewsRouter);
 app.use("/api/store/cart", cartRouter);
 app.use("/api/store/wishlist", wishListRouter);
 app.use("/api/store/categories", storeCategoriesRouter);
