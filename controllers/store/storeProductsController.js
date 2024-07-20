@@ -159,26 +159,34 @@ const getFeaturedProduct = async (req, res) => {
   let id = "";
   if (settingDoc) {
     id = settingDoc.settings.featuredProductId;
-  } else {
+    const foundProduct = await ProductsDB.findOne({ _id: id, storeId }).exec();
+    console.log({ foundProduct });
+    if (!foundProduct)
+      return res.status(400).json({ message: `No Product with the ProductId` });
+    return res.status(200).json({
+      id: foundProduct?._id,
+      name: foundProduct?.name,
+      description: foundProduct.description,
+      // price: foundProduct?.price,
+      productImage: foundProduct?.productImages[0],
+      // category: foundProduct?.category,
+      // properties: foundProduct?.properties,
+    });
+  }
+  if (id === "") {
     const firstProduct = ProductsDB.findOne({ storeId });
     if (firstProduct) {
-      id = firstProduct._id;
+      return res.status(200).json({
+        id: foundProduct?._id,
+        name: foundProduct?.name,
+        description: foundProduct.description,
+        // price: foundProduct?.price,
+        productImage: foundProduct?.productImages[0],
+        // category: foundProduct?.category,
+        // properties: foundProduct?.properties,
+      });
     }
   }
-  console.log({ id });
-  const foundProduct = await ProductsDB.findOne({ _id: id, storeId }).exec();
-  console.log({ foundProduct });
-  if (!foundProduct)
-    return res.status(400).json({ message: `No Product with the ProductId` });
-  res.status(200).json({
-    id: foundProduct?._id,
-    name: foundProduct?.name,
-    description: foundProduct.description,
-    // price: foundProduct?.price,
-    productImage: foundProduct?.productImages[0],
-    // category: foundProduct?.category,
-    // properties: foundProduct?.properties,
-  });
 };
 const getSingleProduct = async (req, res) => {
   const { storeId, id } = req.params;

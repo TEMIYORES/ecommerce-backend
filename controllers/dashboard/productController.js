@@ -59,7 +59,7 @@ const createNewProduct = async (req, res) => {
       Object.keys(files).forEach(async (key) => {
         imageBuffers.push(files[key]);
       });
-      imageUrls = await Promise.all(uploadImages(imageBuffers));
+      imageUrls = await Promise.all(uploadImages(imageBuffers, storeId));
       console.log({ imageUrls });
     }
     await ProductsDB.create({
@@ -86,6 +86,7 @@ const updateProduct = async (req, res) => {
     category,
     properties,
     rawImageUrls,
+    deletedImageUrls,
   } = req.body;
   if (!storeId) {
     return res.status(400).json({ message: "Store Id required." });
@@ -95,12 +96,9 @@ const updateProduct = async (req, res) => {
   const files = req.files;
   const splittedImages = rawImageUrls
     .split(",")
-    .filter((url) => !url.includes("blob:http://"));
-  console.log({ splittedImages });
-  //   Check if Productname and password are passed in the request
+    .filter((url) => url.includes("https://res.cloudinary.com"));
 
   // Check for duplicates
-  console.log({ storeId });
   const foundProduct = await ProductsDB.findOne({ storeId, _id: id }).exec();
   console.log({ foundProduct });
   if (!foundProduct)
@@ -127,15 +125,26 @@ const updateProduct = async (req, res) => {
     if (price) foundProduct.price = price;
     if (category) foundProduct.category = category;
     if (properties) foundProduct.properties = { ...JSON.parse(properties) };
+
+    const parsedDeletedImageUrls = JSON.parse(deletedImageUrls);
+    if (parsedDeletedImageUrls.length) {
+      parsedDeletedImageUrls.forEach(async (url) => {
+        const splitUrl = url.split("/");
+        const imageToDeleteId = splitUrl[splitUrl.length - 1].split(".")[0];
+        console.log({ imageToDeleteId });
+        await deleteImage(imageToDeleteId, storeId);
+      });
+    }
     if (files) {
       const imageBuffers = [];
       Object.keys(files).forEach(async (key) => {
         imageBuffers.push(files[key]);
       });
-      const imageUrls = await Promise.all(uploadImages(imageBuffers));
+      const imageUrls = await Promise.all(uploadImages(imageBuffers, storeId));
       console.log({ imageUrls });
       foundProduct.productImages = [...splittedImages, ...imageUrls];
     } else {
+      console.log({ splittedImages });
       foundProduct.productImages = splittedImages;
     }
     await foundProduct.save();
@@ -157,7 +166,16 @@ const deleteProduct = async (req, res) => {
   // Check for duplicates
   const foundProduct = await ProductsDB.findOne({ storeId, _id: id }).exec();
   if (!foundProduct)
-    res.status(204).json({ message: `No Product with ProductId ${id} Found.` });
+    return res
+      .status(204)
+      .json({ message: `No Product with ProductId ${id} Found.` });
+
+  foundProduct.productImages.forEach(async (url) => {
+    const splitUrl = url.split("/");
+    const imageToDeleteId = splitUrl[splitUrl.length - 1].split(".")[0];
+    console.log({ imageToDeleteId });
+    await deleteImage(imageToDeleteId, storeId);
+  });
   await ProductsDB.deleteOne({ _id: id });
   res
     .status(200)
@@ -187,19 +205,22 @@ const getProduct = async (req, res) => {
     properties: foundProduct?.properties,
   });
 };
-const uploadImages = (imageBuffers) => {
+const uploadImages = (imageBuffers, folderName) => {
   try {
     const uploadPromises = imageBuffers.map(async (imageBuffer) => {
       return new Promise((resolve, reject) => {
         cloudinary.uploader
-          .upload_stream({ resource_type: "image" }, (error, result) => {
-            if (error) {
-              console.error("error", error);
-              reject(error);
-            } else {
-              resolve(result.secure_url);
+          .upload_stream(
+            { folder: `EcommartNg/${folderName}`, resource_type: "image" },
+            (error, result) => {
+              if (error) {
+                console.error("error", error);
+                reject(error);
+              } else {
+                resolve(result.secure_url);
+              }
             }
-          })
+          )
           .end(imageBuffer.data);
       });
     });
@@ -207,6 +228,22 @@ const uploadImages = (imageBuffers) => {
   } catch (error) {
     console.error("error", error);
     reject(error);
+  }
+};
+
+// Function to delete an image from Cloudinary
+const deleteImage = async (imageToDeleteId, folderName) => {
+  try {
+    const result = await cloudinary.uploader.destroy(
+      `EcommartNg/${folderName}/` + imageToDeleteId,
+      {
+        resource_type: "image",
+      }
+    );
+    console.log("Image deletion result:", result);
+    return result;
+  } catch (error) {
+    console.error("Error deleting image:", error);
   }
 };
 export {
