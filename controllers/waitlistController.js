@@ -8,24 +8,28 @@ const __filename = fileURLToPath(import.meta.url);
 // Get the directory name
 import { dirname } from "path";
 const __dirname = dirname(__filename);
+
 const handleWaitlist = async (req, res) => {
-  const { email } = req.body;
-  if (!email) {
+  const { email, storeName } = req.body;
+  if (!email || !storeName) {
     return res.status(400).json({
-      message: "Email is required",
+      message: "Email and store name are required.",
     });
   }
   //   Check for duplicate users in the database
   const duplicate = await WaitlistDB.findOne({ email }).exec(); //findOne method need exec() if there is no callback
 
   if (duplicate) {
-    return res.status(409).json({ message: "Email is already in waitlist" });
+    return res
+      .status(409)
+      .json({ message: "Email is already in waitlist. Thank you!" });
   }
 
   try {
     //     create waitlist
     await WaitlistDB.create({
       email,
+      storeName,
     });
     const transporter = nodemailer.createTransport({
       service: "gmail",
@@ -56,7 +60,7 @@ const handleWaitlist = async (req, res) => {
       ],
     };
     await transporter.sendMail(mailOptions);
-    console.log("Email send successfully!");
+    console.log("Email sent successfully!");
     res
       .status(201)
       .json({ message: `${email} added to waitlist successfully!` });

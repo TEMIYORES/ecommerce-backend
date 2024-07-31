@@ -77,11 +77,13 @@ app.use("/subdir", express.static(path.join(__dirname, "public")));
 // Routes
 app.use("/api", rootRouter);
 
+app.use("/api/waitlist", waitListRoute);
+app.use("/api/stores", storesRouter);
+
 // Store Apis
 app.use("/api/store/auth", storeAuthRoute);
 app.use("/api/store/orders", storeOrderRouter);
 
-app.use("/api/store/waitlist", waitListRoute);
 app.use("/api/store/products", storeProductsRouter);
 app.use("/api/store/reviews", reviewsRouter);
 app.use("/api/store/cart", cartRouter);
@@ -100,7 +102,6 @@ app.use("/api/dashboard/products", productRouter);
 app.use("/api/dashboard/categories", categoryRouter);
 app.use("/api/dashboard/settings", settingsRouter);
 
-app.use("/api/stores", storesRouter);
 app.use("/subdir", subdirRouter);
 
 app.all("*", (req, res) => {

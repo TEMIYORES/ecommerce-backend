@@ -157,36 +157,27 @@ const getFeaturedProduct = async (req, res) => {
   // Check if it exists
   const settingDoc = await SettingDB.findOne({ storeId }).exec();
   let id = "";
-  if (settingDoc) {
-    id = settingDoc.settings.featuredProductId;
-    const foundProduct = await ProductsDB.findOne({ _id: id, storeId }).exec();
-    console.log({ foundProduct });
-    if (!foundProduct)
-      return res.status(400).json({ message: `No Product with the ProductId` });
-    return res.status(200).json({
-      id: foundProduct?._id,
-      name: foundProduct?.name,
-      description: foundProduct.description,
-      // price: foundProduct?.price,
-      productImage: foundProduct?.productImages[0],
-      // category: foundProduct?.category,
-      // properties: foundProduct?.properties,
-    });
+  if (settingDoc) id = settingDoc.settings.featuredProductId;
+  console.log({ id: settingDoc?.settings?.featuredProductId });
+  let foundProduct = null;
+  if (id) {
+    foundProduct = await ProductsDB.findOne({ _id: id, storeId }).exec();
   }
-  if (id === "") {
-    const firstProduct = ProductsDB.findOne({ storeId });
-    if (firstProduct) {
-      return res.status(200).json({
-        id: foundProduct?._id,
-        name: foundProduct?.name,
-        description: foundProduct.description,
-        // price: foundProduct?.price,
-        productImage: foundProduct?.productImages[0],
-        // category: foundProduct?.category,
-        // properties: foundProduct?.properties,
-      });
-    }
+  if (foundProduct === null) {
+    foundProduct = await ProductsDB.findOne({ storeId }).exec();
   }
+  console.log({ foundProduct });
+  if (!foundProduct)
+    return res.status(400).json({ message: `No Product with the ProductId` });
+  return res.status(200).json({
+    id: foundProduct?._id,
+    name: foundProduct?.name,
+    description: foundProduct?.description,
+    // price: foundProduct?.price,
+    productImage: foundProduct?.productImages[0],
+    // category: foundProduct?.category,
+    // properties: foundProduct?.properties,
+  });
 };
 const getSingleProduct = async (req, res) => {
   const { storeId, id } = req.params;

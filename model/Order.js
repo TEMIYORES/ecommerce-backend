@@ -36,6 +36,10 @@ const orderSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    fulfillment: {
+      type: String,
+      default: "not started",
+    },
   },
   {
     timestamps: true,

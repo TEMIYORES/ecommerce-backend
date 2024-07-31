@@ -6,6 +6,7 @@ const getAllCartProducts = async (req, res) => {
       .status(400)
       .json({ message: `Store Id and Products Ids parameter are required!` });
   const allProducts = await ProductsDB.find({ _id: ids });
+  console.log({ allProducts });
   if (!allProducts)
     return res.status(204).json({ message: "No Products found." });
   const result = allProducts.map((product) => {
